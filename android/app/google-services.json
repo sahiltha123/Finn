@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "165114405320",
+    "project_id": "finn-cf6a3",
+    "storage_bucket": "finn-cf6a3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165114405320:android:d9b75d32624fcb7a1ba0fd",
+        "android_client_info": {
+          "package_name": "com.example.finn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxY8d8zLJiddl8BsIIUBU42hCcLCEB9Go"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

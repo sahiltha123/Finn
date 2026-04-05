@@ -1,66 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTextStyles {
   const AppTextStyles._();
 
   static TextTheme textTheme(ColorScheme colors) {
     return TextTheme(
-      displayLarge: TextStyle(
-        fontFamily: 'DM Sans',
+      displayLarge: GoogleFonts.dmSans(
         fontSize: 40,
         fontWeight: FontWeight.w700,
         color: colors.onSurface,
       ),
-      displayMedium: TextStyle(
-        fontFamily: 'DM Sans',
+      displayMedium: GoogleFonts.dmSans(
         fontSize: 32,
         fontWeight: FontWeight.w700,
         color: colors.onSurface,
       ),
-      headlineLarge: TextStyle(
-        fontFamily: 'DM Sans',
+      headlineLarge: GoogleFonts.dmSans(
         fontSize: 28,
         fontWeight: FontWeight.w700,
         color: colors.onSurface,
       ),
-      headlineMedium: TextStyle(
-        fontFamily: 'DM Sans',
+      headlineMedium: GoogleFonts.dmSans(
         fontSize: 24,
         fontWeight: FontWeight.w700,
         color: colors.onSurface,
       ),
-      titleLarge: TextStyle(
-        fontFamily: 'Plus Jakarta Sans',
+      titleLarge: GoogleFonts.plusJakartaSans(
         fontSize: 20,
         fontWeight: FontWeight.w700,
         color: colors.onSurface,
       ),
-      titleMedium: TextStyle(
-        fontFamily: 'Plus Jakarta Sans',
+      titleMedium: GoogleFonts.plusJakartaSans(
         fontSize: 16,
         fontWeight: FontWeight.w700,
         color: colors.onSurface,
       ),
-      bodyLarge: TextStyle(
-        fontFamily: 'Plus Jakarta Sans',
+      bodyLarge: GoogleFonts.plusJakartaSans(
         fontSize: 16,
         fontWeight: FontWeight.w500,
         color: colors.onSurface,
       ),
-      bodyMedium: TextStyle(
-        fontFamily: 'Plus Jakarta Sans',
+      bodyMedium: GoogleFonts.plusJakartaSans(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: colors.onSurface.withValues(alpha: 0.82),
       ),
-      bodySmall: TextStyle(
-        fontFamily: 'Plus Jakarta Sans',
+      bodySmall: GoogleFonts.plusJakartaSans(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: colors.onSurface.withValues(alpha: 0.7),
       ),
-      labelLarge: TextStyle(
-        fontFamily: 'Plus Jakarta Sans',
+      labelLarge: GoogleFonts.plusJakartaSans(
         fontSize: 14,
         fontWeight: FontWeight.w700,
         color: colors.onSurface,

@@ -7,6 +7,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../shared/providers/currency_provider.dart';
 import '../../../../shared/providers/user_provider.dart';
 import '../../../../shared/widgets/finn_category_chip.dart';
+import '../../../../shared/widgets/finn_error_widget.dart';
 import '../../../../shared/widgets/finn_shimmer_list.dart';
 import '../../../transactions/domain/entities/transaction_category.dart';
 import '../../../transactions/domain/entities/transaction_entity.dart';
@@ -123,8 +124,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           );
         },
         loading: () => const FinnShimmerList(itemCount: 5),
-        error: (error, stackTrace) =>
-            const Center(child: Text('Failed to load dashboard')),
+        error: (error, stackTrace) => FinnErrorWidget(
+          message: 'Failed to load your dashboard.',
+          onRetry: () => ref.invalidate(dashboardSummaryProvider),
+        ),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/app_user.dart';
 
 class UserModel extends AppUser {
@@ -10,18 +12,27 @@ class UserModel extends AppUser {
     required super.avatarColorHex,
     required super.onboardingComplete,
     required super.createdAt,
+    super.fcmToken,
   });
 
   factory UserModel.fromMap(Map<String, Object?> map) {
+    final createdAtValue = map['createdAt'];
     return UserModel(
-      uid: map['uid']! as String,
-      name: map['name']! as String,
-      email: map['email']! as String,
-      currencyCode: map['currencyCode']! as String,
-      currencySymbol: map['currencySymbol']! as String,
-      avatarColorHex: map['avatarColorHex']! as String,
-      onboardingComplete: map['onboardingComplete']! as bool,
-      createdAt: DateTime.parse(map['createdAt']! as String),
+      uid: map['uid'] as String? ?? '',
+      name: (map['name'] ?? 'Finn User') as String,
+      email: (map['email'] ?? '') as String,
+      currencyCode: (map['currency'] ?? map['currencyCode'] ?? 'INR') as String,
+      currencySymbol: (map['currencySymbol'] ?? 'Rs.') as String,
+      avatarColorHex:
+          (map['avatarColor'] ?? map['avatarColorHex'] ?? '0xFF1A73E8')
+              as String,
+      onboardingComplete: map['onboardingComplete'] as bool? ?? true,
+      createdAt: createdAtValue is Timestamp
+          ? createdAtValue.toDate()
+          : (createdAtValue != null
+              ? DateTime.parse(createdAtValue as String)
+              : DateTime.now()),
+      fcmToken: map['fcmToken'] as String?,
     );
   }
 
@@ -30,11 +41,36 @@ class UserModel extends AppUser {
       'uid': uid,
       'name': name,
       'email': email,
-      'currencyCode': currencyCode,
+      'currency': currencyCode,
       'currencySymbol': currencySymbol,
-      'avatarColorHex': avatarColorHex,
+      'avatarColor': avatarColorHex,
       'onboardingComplete': onboardingComplete,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'fcmToken': fcmToken,
     };
+  }
+
+  UserModel copyWith({
+    String? uid,
+    String? name,
+    String? email,
+    String? currencyCode,
+    String? currencySymbol,
+    String? avatarColorHex,
+    bool? onboardingComplete,
+    DateTime? createdAt,
+    String? fcmToken,
+  }) {
+    return UserModel(
+      uid: uid ?? this.uid,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      currencyCode: currencyCode ?? this.currencyCode,
+      currencySymbol: currencySymbol ?? this.currencySymbol,
+      avatarColorHex: avatarColorHex ?? this.avatarColorHex,
+      onboardingComplete: onboardingComplete ?? this.onboardingComplete,
+      createdAt: createdAt ?? this.createdAt,
+      fcmToken: fcmToken ?? this.fcmToken,
+    );
   }
 }

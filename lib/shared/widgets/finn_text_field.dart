@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class FinnTextField extends StatelessWidget {
   const FinnTextField({
     super.key,
+    this.name,
     required this.controller,
     required this.label,
     this.hint,
@@ -14,6 +16,7 @@ class FinnTextField extends StatelessWidget {
     this.prefix,
   });
 
+  final String? name;
   final TextEditingController controller;
   final String label;
   final String? hint;
@@ -26,6 +29,25 @@ class FinnTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final decoration = InputDecoration(
+      labelText: label,
+      hintText: hint,
+      prefixIcon: prefix,
+    );
+
+    if (name != null) {
+      return FormBuilderTextField(
+        name: name!,
+        controller: controller,
+        keyboardType: keyboardType,
+        validator: validator,
+        obscureText: obscureText,
+        textInputAction: textInputAction,
+        maxLines: maxLines,
+        decoration: decoration,
+      );
+    }
+
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -33,11 +55,7 @@ class FinnTextField extends StatelessWidget {
       obscureText: obscureText,
       textInputAction: textInputAction,
       maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        prefixIcon: prefix,
-      ),
+      decoration: decoration,
     );
   }
 }

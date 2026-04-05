@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../shared/providers/firebase_providers.dart';
+import '../../../../shared/providers/service_providers.dart';
 import '../../../../shared/providers/user_provider.dart';
 import '../../data/datasources/transaction_firestore_datasource.dart';
 import '../../data/repositories/transaction_repository_impl.dart';
@@ -12,15 +14,17 @@ import '../../domain/usecases/watch_transactions.dart';
 final transactionDatasourceProvider = Provider<TransactionFirestoreDatasource>((
   ref,
 ) {
-  final preferences = ref.watch(sharedPreferencesProvider);
-  return TransactionFirestoreDatasource(preferences);
+  return TransactionFirestoreDatasource(ref.watch(firestoreProvider));
 });
 
 final transactionRepositoryProvider = Provider<TransactionRepositoryImpl>((
   ref,
 ) {
-  final datasource = ref.watch(transactionDatasourceProvider);
-  return TransactionRepositoryImpl(datasource);
+  return TransactionRepositoryImpl(
+    ref.watch(transactionDatasourceProvider),
+    ref.watch(analyticsServiceProvider),
+    ref.watch(goalAutomationServiceProvider),
+  );
 });
 
 final watchTransactionsUseCaseProvider = Provider<WatchTransactions>((ref) {

@@ -7,8 +7,10 @@ This repo now includes:
 - A calm custom design system with light and dark themes
 - Onboarding, currency selection, login, register, and profile flows
 - Bottom navigation with Home, Transactions, Goals, and Insights
-- Local demo-mode repositories for transactions and goals using `SharedPreferences`
+- Firebase Auth email/password and Google Sign-In wiring
+- Firestore-backed profile, settings, transactions, goals, and monthly insights cache
 - Dashboard summaries, charts, Finn Challenges, and monthly insights
+- Firebase Analytics, Crashlytics hooks, local notification automation, and biometric lock
 - Riverpod state management and GoRouter-based app flow
 
 ## Run
@@ -17,6 +19,8 @@ This repo now includes:
 flutter pub get
 flutter run
 ```
+
+Android Firebase config is already present in this repo. iOS runtime verification is still blocked until `ios/Runner/GoogleService-Info.plist` is added.
 
 ## Validation
 
@@ -27,10 +31,17 @@ flutter test
 
 ## Current Scope
 
-The app is intentionally wired in a demo/local-data mode so it runs without Firebase project files. The feature architecture is ready for the next step of replacing the local datasources with Firebase Auth and Firestore implementations once platform config is available.
+The app is now wired for a real Firebase-backed Android-first workflow:
 
-## Next Recommended Step
+- Firebase bootstrap with offline Firestore persistence
+- Crashlytics error capture hooks
+- Analytics event logging for transactions, goals, and insights
+- Firestore security rules in [`firestore.rules`](./firestore.rules)
+- Local notifications for goal milestones, budget alerts, weekly recap, and streak risk
+- FormBuilder-driven auth, transaction, and goal-entry forms
 
-1. Add Firebase project configuration with `flutterfire configure`
-2. Replace the demo auth/transaction/goal datasources with Firebase-backed versions
-3. Add analytics, crashlytics, notifications, and auth providers from the master prompt
+## Remaining Setup Notes
+
+1. Add `ios/Runner/GoogleService-Info.plist` if you want to validate on iOS.
+2. Confirm Firebase console setup for Email/Password auth, Google Sign-In, Firestore, Analytics, Crashlytics, and FCM.
+3. For production delivery, add release signing/SHA configuration for Google Sign-In and verify notification behavior on-device.

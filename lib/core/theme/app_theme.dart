@@ -78,10 +78,36 @@ class AppTheme {
         backgroundColor: scheme.brightness == Brightness.light
             ? Colors.white
             : AppColors.cardDark,
-        indicatorColor: scheme.primary.withValues(alpha: 0.12),
-        labelTextStyle: WidgetStatePropertyAll(
-          textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w700),
+        elevation: 0,
+        height: 68,
+        indicatorColor: scheme.primary.withValues(alpha: 0.18),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
         ),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(
+              color: scheme.primary,
+              size: 28,
+              weight: 600,
+            );
+          }
+          return IconThemeData(color: scheme.onSurfaceVariant, size: 24);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return textTheme.bodySmall!.copyWith(
+              color: scheme.primary,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            );
+          }
+          return textTheme.bodySmall!.copyWith(
+            color: scheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+            fontSize: 12,
+          );
+        }),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: scheme.primary,

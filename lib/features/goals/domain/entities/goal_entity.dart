@@ -22,6 +22,8 @@ class GoalEntity {
     this.durationDays,
     this.startDate,
     this.isCompleted = false,
+    this.storedStatus,
+    this.previousProgress,
   });
 
   final String id;
@@ -38,6 +40,8 @@ class GoalEntity {
   final String icon;
   final String colorHex;
   final bool isCompleted;
+  final GoalStatus? storedStatus;
+  final double? previousProgress;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -56,6 +60,8 @@ class GoalEntity {
     String? icon,
     String? colorHex,
     bool? isCompleted,
+    GoalStatus? storedStatus,
+    double? previousProgress,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -74,6 +80,8 @@ class GoalEntity {
       icon: icon ?? this.icon,
       colorHex: colorHex ?? this.colorHex,
       isCompleted: isCompleted ?? this.isCompleted,
+      storedStatus: storedStatus ?? this.storedStatus,
+      previousProgress: previousProgress ?? this.previousProgress,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

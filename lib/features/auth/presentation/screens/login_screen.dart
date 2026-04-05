@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../../../../core/router/app_routes.dart';
 import '../../../../shared/providers/currency_provider.dart';
@@ -19,9 +21,16 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: 'demo@finn.app');
-  final _passwordController = TextEditingController(text: 'google');
+  final _formKey = GlobalKey<FormBuilderState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +44,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
-            child: Form(
+            child: FormBuilder(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,27 +55,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
                   AuthFormField(
+                    name: 'email',
                     controller: _emailController,
                     label: 'Email',
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || !value.contains('@')) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                        errorText: 'Email is required',
+                      ),
+                      FormBuilderValidators.email(
+                        errorText: 'Enter a valid email',
+                      ),
+                    ]),
                   ),
                   const SizedBox(height: 16),
                   AuthFormField(
+                    name: 'password',
                     controller: _passwordController,
                     label: 'Password',
                     obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.length < 4) {
-                        return 'Password should be at least 4 characters';
-                      }
-                      return null;
-                    },
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                        errorText: 'Password is required',
+                      ),
+                      FormBuilderValidators.minLength(
+                        4,
+                        errorText: 'Password should be at least 4 characters',
+                      ),
+                    ]),
                   ),
                   const SizedBox(height: 24),
                   FinnButton(
@@ -96,7 +112,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _signIn() async {
-    if (!_formKey.currentState!.validate()) return;
+    final isValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (!isValid) return;
     final failure = await ref
         .read(authActionProvider.notifier)
         .signIn(

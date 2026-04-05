@@ -8,6 +8,7 @@ class AppUser {
     required this.avatarColorHex,
     required this.onboardingComplete,
     required this.createdAt,
+    this.fcmToken,
   });
 
   final String uid;
@@ -18,4 +19,5 @@ class AppUser {
   final String avatarColorHex;
   final bool onboardingComplete;
   final DateTime createdAt;
+  final String? fcmToken;
 }

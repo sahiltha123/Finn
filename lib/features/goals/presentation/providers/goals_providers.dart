@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../shared/providers/firebase_providers.dart';
+import '../../../../shared/providers/service_providers.dart';
 import '../../../../shared/providers/user_provider.dart';
 import '../../data/datasources/goals_firestore_datasource.dart';
 import '../../data/repositories/goals_repository_impl.dart';
@@ -9,12 +11,15 @@ import '../../domain/usecases/update_goal_progress.dart';
 import '../../domain/usecases/watch_goals.dart';
 
 final goalsDatasourceProvider = Provider<GoalsFirestoreDatasource>((ref) {
-  final preferences = ref.watch(sharedPreferencesProvider);
-  return GoalsFirestoreDatasource(preferences);
+  return GoalsFirestoreDatasource(ref.watch(firestoreProvider));
 });
 
 final goalsRepositoryProvider = Provider<GoalsRepositoryImpl>((ref) {
-  return GoalsRepositoryImpl(ref.watch(goalsDatasourceProvider));
+  return GoalsRepositoryImpl(
+    ref.watch(goalsDatasourceProvider),
+    ref.watch(analyticsServiceProvider),
+    ref.watch(goalAutomationServiceProvider),
+  );
 });
 
 final watchGoalsUseCaseProvider = Provider<WatchGoals>((ref) {

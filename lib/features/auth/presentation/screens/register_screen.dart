@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../../../../core/router/app_routes.dart';
 import '../../../../shared/providers/currency_provider.dart';
@@ -18,11 +20,20 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormBuilderState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +48,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
-            child: Form(
+            child: FormBuilder(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,45 +59,60 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   ),
                   const SizedBox(height: 24),
                   AuthFormField(
+                    name: 'name',
                     controller: _nameController,
                     label: 'Full name',
-                    validator: (value) {
-                      if (value == null || value.trim().length < 3) {
-                        return 'Enter your name';
-                      }
-                      return null;
-                    },
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                        errorText: 'Name is required',
+                      ),
+                      FormBuilderValidators.minLength(
+                        3,
+                        errorText: 'Enter your name',
+                      ),
+                    ]),
                   ),
                   const SizedBox(height: 16),
                   AuthFormField(
+                    name: 'email',
                     controller: _emailController,
                     label: 'Email',
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || !value.contains('@')) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                        errorText: 'Email is required',
+                      ),
+                      FormBuilderValidators.email(
+                        errorText: 'Enter a valid email',
+                      ),
+                    ]),
                   ),
                   const SizedBox(height: 16),
                   AuthFormField(
+                    name: 'password',
                     controller: _passwordController,
                     label: 'Password',
                     obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.length < 4) {
-                        return 'Use at least 4 characters';
-                      }
-                      return null;
-                    },
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                        errorText: 'Password is required',
+                      ),
+                      FormBuilderValidators.minLength(
+                        4,
+                        errorText: 'Use at least 4 characters',
+                      ),
+                    ]),
                   ),
                   const SizedBox(height: 16),
                   AuthFormField(
+                    name: 'confirm_password',
                     controller: _confirmPasswordController,
                     label: 'Confirm password',
                     obscureText: true,
                     validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Confirm your password';
+                      }
                       if (value != _passwordController.text) {
                         return 'Passwords do not match';
                       }
@@ -116,7 +142,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _register() async {
-    if (!_formKey.currentState!.validate()) return;
+    final isValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (!isValid) return;
     final currency = ref.read(selectedCurrencyProvider);
     final failure = await ref
         .read(authActionProvider.notifier)

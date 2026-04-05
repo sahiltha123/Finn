@@ -6,11 +6,13 @@ import 'finn_text_field.dart';
 class FinnAmountInput extends StatelessWidget {
   const FinnAmountInput({
     super.key,
+    this.name,
     required this.controller,
     required this.currency,
     this.validator,
   });
 
+  final String? name;
   final TextEditingController controller;
   final CurrencyInfo currency;
   final String? Function(String?)? validator;
@@ -18,6 +20,7 @@ class FinnAmountInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FinnTextField(
+      name: name,
       controller: controller,
       label: 'Amount',
       hint: '0.00',

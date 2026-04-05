@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../../../../core/utils/validators/amount_validator.dart';
 import '../../../../core/utils/validators/transaction_validator.dart';
@@ -28,7 +30,7 @@ class AddEditTransactionSheet extends ConsumerStatefulWidget {
 
 class _AddEditTransactionSheetState
     extends ConsumerState<AddEditTransactionSheet> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormBuilderState>();
   late final TextEditingController _amountController;
   late final TextEditingController _notesController;
   late TransactionType _type;
@@ -50,6 +52,13 @@ class _AddEditTransactionSheetState
   }
 
   @override
+  void dispose() {
+    _amountController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final currency = ref.watch(selectedCurrencyProvider);
 
@@ -61,7 +70,7 @@ class _AddEditTransactionSheetState
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
       child: SingleChildScrollView(
-        child: Form(
+        child: FormBuilder(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,9 +84,15 @@ class _AddEditTransactionSheetState
               ),
               const SizedBox(height: 20),
               FinnAmountInput(
+                name: 'amount',
                 controller: _amountController,
                 currency: currency,
-                validator: AmountValidator.validate,
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(
+                    errorText: 'Amount is required',
+                  ),
+                  AmountValidator.validate,
+                ]),
               ),
               const SizedBox(height: 16),
               TypeToggle(
@@ -112,6 +127,7 @@ class _AddEditTransactionSheetState
               ),
               const SizedBox(height: 16),
               FinnTextField(
+                name: 'notes',
                 controller: _notesController,
                 label: 'Notes',
                 hint: 'Optional note',
@@ -147,7 +163,8 @@ class _AddEditTransactionSheetState
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+    final isValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (!isValid) return;
     final user = ref.read(currentUserProvider);
     if (user == null) return;
 

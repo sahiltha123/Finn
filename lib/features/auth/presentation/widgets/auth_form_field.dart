@@ -5,6 +5,7 @@ import '../../../../shared/widgets/finn_text_field.dart';
 class AuthFormField extends StatelessWidget {
   const AuthFormField({
     super.key,
+    required this.name,
     required this.controller,
     required this.label,
     this.hint,
@@ -13,6 +14,7 @@ class AuthFormField extends StatelessWidget {
     this.keyboardType,
   });
 
+  final String name;
   final TextEditingController controller;
   final String label;
   final String? hint;
@@ -23,6 +25,7 @@ class AuthFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FinnTextField(
+      name: name,
       controller: controller,
       label: label,
       hint: hint,

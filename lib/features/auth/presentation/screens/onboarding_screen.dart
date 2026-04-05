@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/router/app_routes.dart';
@@ -23,17 +25,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     _SlideData(
       title: AppStrings.onboardingTrackTitle,
       body: AppStrings.onboardingTrackBody,
-      icon: Icons.auto_graph_rounded,
+      assetPath: AppAssets.onboardingTrack,
     ),
     _SlideData(
       title: AppStrings.onboardingUnderstandTitle,
       body: AppStrings.onboardingUnderstandBody,
-      icon: Icons.insights_rounded,
+      assetPath: AppAssets.onboardingUnderstand,
     ),
     _SlideData(
       title: AppStrings.onboardingGrowTitle,
       body: AppStrings.onboardingGrowBody,
-      icon: Icons.flag_circle_rounded,
+      assetPath: AppAssets.onboardingGrow,
     ),
   ];
 
@@ -77,10 +79,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               ],
                             ),
                           ),
-                          child: Icon(
-                            slide.icon,
-                            size: 92,
-                            color: colors.primary,
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Lottie.asset(
+                              slide.assetPath,
+                              repeat: true,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 40),
@@ -150,10 +155,10 @@ class _SlideData {
   const _SlideData({
     required this.title,
     required this.body,
-    required this.icon,
+    required this.assetPath,
   });
 
   final String title;
   final String body;
-  final IconData icon;
+  final String assetPath;
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 import '../../../../core/utils/validators/amount_validator.dart';
 import '../../../../core/utils/validators/goal_validator.dart';
@@ -20,7 +22,7 @@ class CreateGoalSheet extends ConsumerStatefulWidget {
 }
 
 class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormBuilderState>();
   final _titleController = TextEditingController();
   final _targetController = TextEditingController();
   final _currentController = TextEditingController(text: '0');
@@ -43,6 +45,14 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
   ];
 
   @override
+  void dispose() {
+    _titleController.dispose();
+    _targetController.dispose();
+    _currentController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
@@ -52,7 +62,7 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
       child: SingleChildScrollView(
-        child: Form(
+        child: FormBuilder(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,14 +80,21 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
                 ),
               ] else if (_step == 1) ...[
                 FinnTextField(
+                  name: 'title',
                   controller: _titleController,
                   label: 'Title',
-                  validator: GoalValidator.validateTitle,
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(
+                      errorText: 'Title is required',
+                    ),
+                    GoalValidator.validateTitle,
+                  ]),
                 ),
                 const SizedBox(height: 16),
                 if (_goalType == GoalType.savings ||
                     _goalType == GoalType.budget) ...[
                   FinnTextField(
+                    name: 'target_amount',
                     controller: _targetController,
                     label: _goalType == GoalType.savings
                         ? 'Target amount'
@@ -85,18 +102,29 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    validator: AmountValidator.validate,
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                        errorText: 'Amount is required',
+                      ),
+                      AmountValidator.validate,
+                    ]),
                   ),
                 ],
                 if (_goalType == GoalType.savings) ...[
                   const SizedBox(height: 16),
                   FinnTextField(
+                    name: 'current_amount',
                     controller: _currentController,
                     label: 'Current amount',
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    validator: AmountValidator.validate,
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                        errorText: 'Current amount is required',
+                      ),
+                      AmountValidator.validate,
+                    ]),
                   ),
                   const SizedBox(height: 16),
                   ListTile(
@@ -112,7 +140,8 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
                 if (_goalType == GoalType.budget ||
                     _goalType == GoalType.noSpend) ...[
                   const SizedBox(height: 16),
-                  DropdownButtonFormField<TransactionCategory>(
+                  FormBuilderDropdown<TransactionCategory>(
+                    name: 'category',
                     initialValue: _category,
                     items: TransactionCategory.values
                         .where((item) => item.defaultType.name == 'expense')
@@ -129,6 +158,9 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
                       }
                     },
                     decoration: const InputDecoration(labelText: 'Category'),
+                    validator: FormBuilderValidators.required(
+                      errorText: 'Choose a category',
+                    ),
                   ),
                 ],
                 if (_goalType == GoalType.noSpend) ...[
@@ -233,7 +265,10 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
   }
 
   void _nextStep() {
-    if (_step == 1 && !_formKey.currentState!.validate()) return;
+    if (_step == 1) {
+      final isValid = _formKey.currentState?.saveAndValidate() ?? false;
+      if (!isValid) return;
+    }
     setState(() => _step += 1);
   }
 
@@ -250,7 +285,10 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
   }
 
   void _submit() {
-    if (!_formKey.currentState!.validate()) return;
+    if (_step == 1) {
+      final isValid = _formKey.currentState?.saveAndValidate() ?? false;
+      if (!isValid) return;
+    }
     final now = DateTime.now();
     widget.onCreate(
       GoalEntity(

@@ -59,55 +59,73 @@ class _CurrencyPickerScreenState extends ConsumerState<CurrencyPickerScreen> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: ListView.separated(
-                itemBuilder: (context, index) {
-                  final currency = currencies[index];
-                  final selected = currency.code == _selectedCurrency.code;
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(28),
-                    onTap: () => setState(() => _selectedCurrency = currency),
-                    child: FinnCard(
-                      child: Row(
+              child: currencies.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircleAvatar(
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: selected ? 0.22 : 0.12),
-                            child: Text(currency.symbol.trim()),
+                          Icon(
+                            Icons.search_off_rounded,
+                            size: 48,
+                            color: Theme.of(context).colorScheme.outline,
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          const SizedBox(height: 16),
+                          Text(
+                            'No currencies found for "${_searchController.text}"',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.separated(
+                      itemBuilder: (context, index) {
+                        final currency = currencies[index];
+                        final selected = currency.code == _selectedCurrency.code;
+                        return InkWell(
+                          borderRadius: BorderRadius.circular(28),
+                          onTap: () => setState(() => _selectedCurrency = currency),
+                          child: FinnCard(
+                            child: Row(
                               children: [
-                                Text(
-                                  currency.label,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
+                                CircleAvatar(
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withValues(alpha: selected ? 0.22 : 0.12),
+                                  child: Text(currency.symbol.trim()),
                                 ),
-                                Text(
-                                  currency.code,
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        currency.label,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium,
+                                      ),
+                                      Text(
+                                        currency.code,
+                                        style: Theme.of(context).textTheme.bodyMedium,
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                if (selected)
+                                  Icon(
+                                    Icons.check_circle_rounded,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
                               ],
                             ),
                           ),
-                          if (selected)
-                            Icon(
-                              Icons.check_circle_rounded,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                        ],
-                      ),
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 12),
+                      itemCount: currencies.length,
                     ),
-                  );
-                },
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemCount: currencies.length,
-              ),
             ),
             FinnButton(label: 'Continue to sign in', onPressed: _continue),
           ],

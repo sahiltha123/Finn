@@ -2,7 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../shared/models/currency_info.dart';
-import '../../../../shared/providers/user_provider.dart';
+import '../../../../shared/providers/firebase_providers.dart';
+import '../../../../shared/providers/service_providers.dart';
 import '../../data/datasources/firebase_auth_datasource.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/usecases/sign_in_with_email.dart';
@@ -12,8 +13,12 @@ import '../../domain/usecases/sign_up_with_email.dart';
 import '../../domain/usecases/watch_auth_state.dart';
 
 final firebaseAuthDatasourceProvider = Provider<FirebaseAuthDatasource>((ref) {
-  final preferences = ref.watch(sharedPreferencesProvider);
-  return FirebaseAuthDatasource(preferences);
+  return FirebaseAuthDatasource(
+    ref.watch(firebaseAuthProvider),
+    ref.watch(firestoreProvider),
+    ref.watch(googleSignInProvider),
+    ref.watch(messagingServiceProvider),
+  );
 });
 
 final authRepositoryProvider = Provider<AuthRepositoryImpl>((ref) {

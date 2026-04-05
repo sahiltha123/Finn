@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../../transactions/domain/entities/transaction_category.dart';
 import '../../domain/entities/goal_entity.dart';
+import '../../domain/entities/goal_status.dart';
 import '../../domain/entities/goal_type.dart';
 
 class GoalModel extends GoalEntity {
@@ -20,6 +23,8 @@ class GoalModel extends GoalEntity {
     super.durationDays,
     super.startDate,
     super.isCompleted,
+    super.storedStatus,
+    super.previousProgress,
   });
 
   factory GoalModel.fromEntity(GoalEntity entity) {
@@ -40,33 +45,49 @@ class GoalModel extends GoalEntity {
       durationDays: entity.durationDays,
       startDate: entity.startDate,
       isCompleted: entity.isCompleted,
+      storedStatus: entity.storedStatus,
+      previousProgress: entity.previousProgress,
     );
   }
 
   factory GoalModel.fromMap(Map<String, Object?> map) {
+    final deadlineValue = map['deadline'];
+    final startDateValue = map['startDate'];
+    final createdAtValue = map['createdAt'];
+    final updatedAtValue = map['updatedAt'];
     return GoalModel(
       id: map['id']! as String,
       title: map['title']! as String,
       type: GoalType.values.byName(map['type']! as String),
       targetAmount: (map['targetAmount'] as num?)?.toDouble(),
       currentAmount: (map['currentAmount'] as num?)?.toDouble(),
-      deadline: map['deadline'] == null
+      deadline: deadlineValue == null
           ? null
-          : DateTime.parse(map['deadline']! as String),
+          : deadlineValue is Timestamp
+          ? deadlineValue.toDate()
+          : DateTime.parse(deadlineValue as String),
       category: map['category'] == null
           ? null
           : TransactionCategory.values.byName(map['category']! as String),
       streakCount: map['streakCount'] as int?,
       streakTarget: map['streakTarget'] as int?,
       durationDays: map['durationDays'] as int?,
-      startDate: map['startDate'] == null
+      startDate: startDateValue == null
           ? null
-          : DateTime.parse(map['startDate']! as String),
+          : startDateValue is Timestamp
+          ? startDateValue.toDate()
+          : DateTime.parse(startDateValue as String),
       icon: map['icon']! as String,
       colorHex: map['colorHex']! as String,
       isCompleted: map['isCompleted']! as bool,
-      createdAt: DateTime.parse(map['createdAt']! as String),
-      updatedAt: DateTime.parse(map['updatedAt']! as String),
+      storedStatus: GoalStatusX.fromFirestore(map['status'] as String?),
+      previousProgress: (map['previousProgress'] as num?)?.toDouble(),
+      createdAt: createdAtValue is Timestamp
+          ? createdAtValue.toDate()
+          : DateTime.parse(createdAtValue! as String),
+      updatedAt: updatedAtValue is Timestamp
+          ? updatedAtValue.toDate()
+          : DateTime.parse(updatedAtValue! as String),
     );
   }
 
@@ -77,17 +98,19 @@ class GoalModel extends GoalEntity {
       'type': type.name,
       'targetAmount': targetAmount,
       'currentAmount': currentAmount,
-      'deadline': deadline?.toIso8601String(),
+      'deadline': deadline == null ? null : Timestamp.fromDate(deadline!),
       'category': category?.name,
       'streakCount': streakCount,
       'streakTarget': streakTarget,
       'durationDays': durationDays,
-      'startDate': startDate?.toIso8601String(),
+      'startDate': startDate == null ? null : Timestamp.fromDate(startDate!),
       'icon': icon,
       'colorHex': colorHex,
       'isCompleted': isCompleted,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'status': (storedStatus ?? GoalStatus.onTrack).firestoreValue,
+      'previousProgress': previousProgress,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
     };
   }
 }

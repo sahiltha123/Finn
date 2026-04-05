@@ -6,6 +6,7 @@ import '../../../../shared/models/currency_info.dart';
 import '../../../../shared/providers/currency_provider.dart';
 import '../../../../shared/providers/theme_provider.dart';
 import '../../../../shared/providers/user_provider.dart';
+import '../../../../shared/providers/service_providers.dart';
 import '../../../../shared/widgets/finn_card.dart';
 import '../../../../shared/widgets/finn_snackbar.dart';
 import '../providers/auth_providers.dart';
@@ -47,7 +48,7 @@ class ProfileScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const Chip(label: Text('Demo mode')),
+                const Chip(label: Text('Synced')),
               ],
             ),
           ),
@@ -73,7 +74,23 @@ class ProfileScreen extends ConsumerWidget {
           _ToggleTile(
             title: 'Biometric lock',
             value: session.biometricEnabled,
-            onChanged: (value) {
+            onChanged: (value) async {
+              if (value) {
+                final biometricService = ref.read(biometricServiceProvider);
+                final canAuth = await biometricService.canAuthenticate();
+                if (!canAuth) {
+                  if (context.mounted) {
+                    showFinnSnackBar(
+                      context,
+                      message: 'Biometrics not available on this device',
+                    );
+                  }
+                  return;
+                }
+
+                final authenticated = await biometricService.authenticate();
+                if (!authenticated) return;
+              }
               ref.read(appSessionProvider).setBiometricEnabled(value);
             },
           ),
@@ -121,6 +138,28 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           FilledButton.tonalIcon(
             onPressed: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Sign out?'),
+                  content: const Text('You can sign back in at any time.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Sign out'),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirmed != true) {
+                return;
+              }
+
               final failure = await ref
                   .read(authActionProvider.notifier)
                   .signOut();

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/transaction_category.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/entities/transaction_type.dart';
@@ -30,15 +32,24 @@ class TransactionModel extends TransactionEntity {
   }
 
   factory TransactionModel.fromMap(Map<String, Object?> map) {
+    final dateValue = map['date'];
+    final createdAtValue = map['createdAt'];
+    final updatedAtValue = map['updatedAt'];
     return TransactionModel(
       id: map['id']! as String,
       amount: (map['amount']! as num).toDouble(),
       type: TransactionType.values.byName(map['type']! as String),
       category: TransactionCategory.values.byName(map['category']! as String),
-      date: DateTime.parse(map['date']! as String),
+      date: dateValue is Timestamp
+          ? dateValue.toDate()
+          : DateTime.parse(dateValue! as String),
       notes: map['notes'] as String?,
-      createdAt: DateTime.parse(map['createdAt']! as String),
-      updatedAt: DateTime.parse(map['updatedAt']! as String),
+      createdAt: createdAtValue is Timestamp
+          ? createdAtValue.toDate()
+          : DateTime.parse(createdAtValue! as String),
+      updatedAt: updatedAtValue is Timestamp
+          ? updatedAtValue.toDate()
+          : DateTime.parse(updatedAtValue! as String),
       isRecurring: map['isRecurring']! as bool,
     );
   }
@@ -49,10 +60,10 @@ class TransactionModel extends TransactionEntity {
       'amount': amount,
       'type': type.name,
       'category': category.name,
-      'date': date.toIso8601String(),
+      'date': Timestamp.fromDate(date),
       'notes': notes,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
       'isRecurring': isRecurring,
     };
   }

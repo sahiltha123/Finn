@@ -6,6 +6,7 @@ import '../../../transactions/presentation/providers/transaction_providers.dart'
 import '../../data/datasources/dashboard_firestore_datasource.dart';
 import '../../data/repositories/dashboard_repository_impl.dart';
 import '../../domain/usecases/watch_dashboard_summary.dart';
+import '../../domain/entities/dashboard_summary.dart';
 
 final dashboardDatasourceProvider = Provider<DashboardFirestoreDatasource>((
   ref,
@@ -26,7 +27,7 @@ final watchDashboardSummaryUseCaseProvider = Provider<WatchDashboardSummary>((
   return WatchDashboardSummary(ref.watch(dashboardRepositoryProvider));
 });
 
-final dashboardSummaryProvider = StreamProvider((ref) {
+final dashboardSummaryProvider = StreamProvider<DashboardSummary>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user == null) {
     return const Stream.empty();

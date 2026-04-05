@@ -9,6 +9,7 @@ import '../../../../core/extensions/datetime_ext.dart';
 import '../../../../shared/providers/currency_provider.dart';
 import '../../../../shared/providers/user_provider.dart';
 import '../../../../shared/widgets/finn_empty_state.dart';
+import '../../../../shared/widgets/finn_error_widget.dart';
 import '../../../../shared/widgets/finn_shimmer_list.dart';
 import '../../../../shared/widgets/finn_snackbar.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -54,17 +55,6 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
             query: _query,
           );
 
-          if (filtered.isEmpty) {
-            return const FinnEmptyState(
-              icon: Icons.receipt_long_rounded,
-              title: AppStrings.noTransactions,
-              message:
-                  'Start with one expense or income to build your money timeline.',
-            );
-          }
-
-          final grouped = _groupTransactions(filtered);
-
           return ListView(
             padding: const EdgeInsets.all(20),
             children: [
@@ -82,24 +72,37 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
                 onTypeChanged: (value) => setState(() => _selectedType = value),
               ),
               const SizedBox(height: 24),
-              ...grouped.entries.map(
-                (entry) => Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: TransactionDayGroup(
-                    date: entry.key,
-                    transactions: entry.value,
-                    currency: currency,
-                    onTap: _editTransaction,
-                    onDismissed: _deleteTransaction,
+              if (filtered.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(top: 40),
+                  child: FinnEmptyState(
+                    icon: Icons.receipt_long_rounded,
+                    title: AppStrings.noTransactions,
+                    message:
+                        'Start with one expense or income to build your money timeline.',
+                  ),
+                )
+              else
+                ..._groupTransactions(filtered).entries.map(
+                  (entry) => Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: TransactionDayGroup(
+                      date: entry.key,
+                      transactions: entry.value,
+                      currency: currency,
+                      onTap: _editTransaction,
+                      onDismissed: _deleteTransaction,
+                    ),
                   ),
                 ),
-              ),
             ],
           );
         },
         loading: () => const FinnShimmerList(itemCount: 6),
-        error: (error, stackTrace) =>
-            Center(child: Text('Failed to load transactions')),
+        error: (error, stackTrace) => FinnErrorWidget(
+          message: 'Failed to load transactions.',
+          onRetry: () => ref.invalidate(transactionsProvider),
+        ),
       ),
     );
   }

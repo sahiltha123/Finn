@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/date_formatter.dart';
+import '../../../../shared/providers/service_providers.dart';
 import '../../../../shared/providers/currency_provider.dart';
 import '../../../../shared/widgets/finn_empty_state.dart';
+import '../../../../shared/widgets/finn_error_widget.dart';
 import '../../../../shared/widgets/finn_shimmer_list.dart';
 import '../providers/insights_providers.dart';
 import '../widgets/category_donut_chart.dart';
@@ -11,34 +13,41 @@ import '../widgets/finn_tip_card.dart';
 import '../widgets/monthly_summary_cards.dart';
 import '../widgets/six_month_sparkline.dart';
 import '../widgets/weekly_bar_chart.dart';
+import '../../../transactions/domain/entities/transaction_category.dart';
 
-class InsightsScreen extends ConsumerWidget {
+class InsightsScreen extends ConsumerStatefulWidget {
   const InsightsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<InsightsScreen> createState() => _InsightsScreenState();
+}
+
+class _InsightsScreenState extends ConsumerState<InsightsScreen> {
+  String? _lastTrackedMonth;
+
+  @override
+  Widget build(BuildContext context) {
     final month = ref.watch(insightsMonthProvider);
     final insightsAsync = ref.watch(insightsProvider);
     final currency = ref.watch(selectedCurrencyProvider);
     final tipsUseCase = ref.watch(generateFinnTipsUseCaseProvider);
+    final monthString = DateFormatter.compactMonth(month);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Insights')),
       body: insightsAsync.when(
         data: (insights) {
+          if (_lastTrackedMonth != monthString) {
+            _lastTrackedMonth = monthString;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ref.read(analyticsServiceProvider).logInsightsViewed(monthString);
+            });
+          }
           final tips = tipsUseCase(insights);
           final hasData =
               insights.totalIncome > 0 ||
               insights.totalExpense > 0 ||
               insights.categoryBreakdown.isNotEmpty;
-          if (!hasData) {
-            return const FinnEmptyState(
-              icon: Icons.insights_rounded,
-              title: 'No insights yet',
-              message:
-                  'Log a few transactions and Finn will start surfacing trends.',
-            );
-          }
 
           return ListView(
             padding: const EdgeInsets.all(20),
@@ -75,7 +84,18 @@ class InsightsScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              MonthlySummaryCards(
+              if (!hasData)
+                const Padding(
+                  padding: EdgeInsets.only(top: 40),
+                  child: FinnEmptyState(
+                    icon: Icons.insights_rounded,
+                    title: 'No insights yet',
+                    message:
+                        'Log a few transactions and Finn will start surfacing trends.',
+                  ),
+                )
+              else ...[
+                MonthlySummaryCards(
                 income: insights.totalIncome,
                 expense: insights.totalExpense,
                 savingsRate: insights.savingsRate,
@@ -105,12 +125,15 @@ class InsightsScreen extends ConsumerWidget {
                   child: FinnTipCard(tip: tip),
                 ),
               ),
+              ],
             ],
           );
         },
         loading: () => const FinnShimmerList(itemCount: 4),
-        error: (error, stackTrace) =>
-            const Center(child: Text('Failed to load insights')),
+        error: (error, stackTrace) => FinnErrorWidget(
+          message: 'Failed to load insights for this month.',
+          onRetry: () => ref.invalidate(insightsProvider),
+        ),
       ),
     );
   }

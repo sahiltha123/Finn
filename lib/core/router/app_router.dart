@@ -47,6 +47,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       }
 
       if (session.currentUser == null) {
+        if (location == AppRoutes.splash) {
+          return AppRoutes.login;
+        }
         return publicRoutes.contains(location) ? null : AppRoutes.login;
       }
 

@@ -6,6 +6,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../shared/providers/currency_provider.dart';
 import '../../../../shared/providers/user_provider.dart';
 import '../../../../shared/widgets/finn_empty_state.dart';
+import '../../../../shared/widgets/finn_error_widget.dart';
 import '../../../../shared/widgets/finn_shimmer_list.dart';
 import '../../../../shared/widgets/finn_snackbar.dart';
 import '../../../transactions/presentation/providers/transaction_providers.dart';
@@ -37,15 +38,6 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
       body: goalsAsync.when(
         data: (goals) {
           final transactions = transactionsAsync.valueOrNull ?? const [];
-          if (goals.isEmpty) {
-            return const FinnEmptyState(
-              icon: Icons.flag_rounded,
-              title: AppStrings.noGoals,
-              message:
-                  'Create a challenge to keep saving and spending with intention.',
-            );
-          }
-
           final active = goals
               .where(
                 (goal) =>
@@ -69,57 +61,71 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 16),
-              if (active.isEmpty)
-                const FinnEmptyState(
-                  icon: Icons.flag_circle_rounded,
-                  title: 'No active challenges',
-                  message:
-                      'Create one from the button below and Finn will keep score.',
+              if (goals.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(top: 40),
+                  child: FinnEmptyState(
+                    icon: Icons.flag_rounded,
+                    title: AppStrings.noGoals,
+                    message:
+                        'Create a challenge to keep saving and spending with intention.',
+                  ),
                 )
-              else
-                ...active.map(
-                  (goal) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: GoalCard(
-                      goal: goal,
-                      transactions: transactions,
-                      currency: currency,
-                      onDelete: () => _deleteGoal(goal.id),
-                      onAddProgress: goal.type == GoalType.savings
-                          ? () => _updateSavingsProgress(goal)
-                          : null,
+              else ...[
+                if (active.isEmpty)
+                  const FinnEmptyState(
+                    icon: Icons.flag_circle_rounded,
+                    title: 'No active challenges',
+                    message:
+                        'Create one from the button below and Finn will keep score.',
+                  )
+                else
+                  ...active.map(
+                    (goal) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: GoalCard(
+                        goal: goal,
+                        transactions: transactions,
+                        currency: currency,
+                        onDelete: () => _deleteGoal(goal.id),
+                        onAddProgress: goal.type == GoalType.savings
+                            ? () => _updateSavingsProgress(goal)
+                            : null,
+                      ),
                     ),
                   ),
+                const SizedBox(height: 8),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Completed challenges'),
+                  trailing: Icon(
+                    _showCompleted
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                  ),
+                  onTap: () => setState(() => _showCompleted = !_showCompleted),
                 ),
-              const SizedBox(height: 8),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Completed challenges'),
-                trailing: Icon(
-                  _showCompleted
-                      ? Icons.keyboard_arrow_up_rounded
-                      : Icons.keyboard_arrow_down_rounded,
-                ),
-                onTap: () => setState(() => _showCompleted = !_showCompleted),
-              ),
-              if (_showCompleted)
-                ...completed.map(
-                  (goal) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: GoalCard(
-                      goal: goal,
-                      transactions: transactions,
-                      currency: currency,
-                      onDelete: () => _deleteGoal(goal.id),
+                if (_showCompleted)
+                  ...completed.map(
+                    (goal) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: GoalCard(
+                        goal: goal,
+                        transactions: transactions,
+                        currency: currency,
+                        onDelete: () => _deleteGoal(goal.id),
+                      ),
                     ),
                   ),
-                ),
+              ],
             ],
           );
         },
         loading: () => const FinnShimmerList(itemCount: 4),
-        error: (error, stackTrace) =>
-            const Center(child: Text('Failed to load challenges')),
+        error: (error, stackTrace) => FinnErrorWidget(
+          message: 'Failed to load Finn Challenges.',
+          onRetry: () => ref.invalidate(goalsProvider),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openCreateGoalSheet,
@@ -141,9 +147,14 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
             uid: user.uid,
             goal: goal,
           );
+          if (!context.mounted) return;
           result.fold(
             (failure) => showFinnSnackBar(context, message: failure.message),
-            (_) => showFinnSnackBar(context, message: 'Challenge created'),
+            (_) async {
+              await HapticFeedback.lightImpact();
+              if (!context.mounted) return;
+              showFinnSnackBar(context, message: 'Challenge created');
+            },
           );
         },
       ),
@@ -204,7 +215,11 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
 
     result.fold(
       (failure) => showFinnSnackBar(context, message: failure.message),
-      (_) => showFinnSnackBar(context, message: 'Challenge updated'),
+      (_) async {
+        await HapticFeedback.lightImpact();
+        if (!mounted) return;
+        showFinnSnackBar(context, message: 'Challenge updated');
+      },
     );
   }
 }

@@ -13,9 +13,10 @@ import '../../domain/entities/goal_type.dart';
 import 'goal_type_selector.dart';
 
 class CreateGoalSheet extends ConsumerStatefulWidget {
-  const CreateGoalSheet({super.key, required this.onCreate});
+  const CreateGoalSheet({super.key, required this.onCreate, this.initialGoal});
 
   final ValueChanged<GoalEntity> onCreate;
+  final GoalEntity? initialGoal;
 
   @override
   ConsumerState<CreateGoalSheet> createState() => _CreateGoalSheetState();
@@ -43,6 +44,25 @@ class _CreateGoalSheetState extends ConsumerState<CreateGoalSheet> {
     '0xFFFFBE0B',
     '0xFF8338EC',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialGoal != null) {
+      final goal = widget.initialGoal!;
+      _titleController.text = goal.title;
+      if (goal.targetAmount != null) {
+        _targetController.text = goal.targetAmount!.toStringAsFixed(0);
+      }
+      _goalType = goal.type;
+      if (goal.deadline != null) {
+        _deadline = goal.deadline!;
+      }
+      _icon = goal.icon;
+      _colorHex = goal.colorHex;
+      _step = 1;
+    }
+  }
 
   @override
   void dispose() {

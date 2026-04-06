@@ -56,7 +56,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
           );
 
           return ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
             children: [
               TextField(
                 controller: _searchController,
@@ -130,6 +130,7 @@ class _TransactionsScreenState extends ConsumerState<TransactionsScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true,
       builder: (context) => AddEditTransactionSheet(transaction: transaction),
     );
   }

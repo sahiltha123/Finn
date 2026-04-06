@@ -76,6 +76,8 @@ class AppSessionController extends ChangeNotifier {
   static const _currencyCodeKey = 'finn_currency_code_v1';
   static const _biometricLockKey = 'finn_biometric_lock_v1';
   static const _notificationsKey = 'finn_notifications_v1';
+  static const _monthlyIncomeKey = 'finn_monthly_income_v1';
+  static const _pendingInitialGoalKey = 'finn_pending_goal_v1';
 
   final SharedPreferences _preferences;
   final FirebaseAuth _auth;
@@ -93,6 +95,8 @@ class AppSessionController extends ChangeNotifier {
   CurrencyInfo _selectedCurrency = CurrencyInfo.defaultCurrency;
   AppSettings _settings = AppSettings.defaults;
   AppUser? _currentUser;
+  double? _monthlyIncome;
+  bool _pendingInitialGoal = false;
 
   bool get initialized => _initialized;
   bool get onboardingComplete => _onboardingComplete;
@@ -103,6 +107,8 @@ class AppSessionController extends ChangeNotifier {
   CurrencyInfo get selectedCurrency => _selectedCurrency;
   AppUser? get currentUser => _currentUser;
   AppSettings get settings => _settings;
+  double? get monthlyIncome => _monthlyIncome;
+  bool get pendingInitialGoal => _pendingInitialGoal;
 
   Future<void> completeOnboarding() async {
     _onboardingComplete = true;
@@ -154,6 +160,28 @@ class AppSessionController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> saveMonthlyIncome(double income) async {
+    _monthlyIncome = income;
+    await _preferences.setDouble(_monthlyIncomeKey, income);
+    final user = _auth.currentUser;
+    if (user != null) {
+      await _userDocument(user.uid).set({
+        'profile': {'monthlyIncome': income},
+      }, SetOptions(merge: true));
+    }
+    notifyListeners();
+  }
+
+  Future<void> setPendingInitialGoal(bool pending) async {
+    _pendingInitialGoal = pending;
+    if (pending) {
+      await _preferences.setBool(_pendingInitialGoalKey, true);
+    } else {
+      await _preferences.remove(_pendingInitialGoalKey);
+    }
+    notifyListeners();
+  }
+
   void _hydrateLocalState() {
     _onboardingComplete = _preferences.getBool(_onboardingKey) ?? false;
     final isDarkMode = _preferences.getBool(_themeModeKey) ?? false;
@@ -167,6 +195,9 @@ class AppSessionController extends ChangeNotifier {
 
     final biometricLock = _preferences.getBool(_biometricLockKey) ?? false;
     final notificationsEnabled = _preferences.getBool(_notificationsKey) ?? true;
+
+    _monthlyIncome = _preferences.getDouble(_monthlyIncomeKey);
+    _pendingInitialGoal = _preferences.getBool(_pendingInitialGoalKey) ?? false;
 
     _settings = AppSettings.defaults.copyWith(
       darkMode: isDarkMode,
@@ -200,16 +231,33 @@ class AppSessionController extends ChangeNotifier {
       );
 
       if (profile.isNotEmpty) {
-        final user = UserModel.fromMap({'uid': firebaseUser.uid, ...profile});
+        final profileMap = Map<String, dynamic>.from(profile);
+        final existingName = profileMap['name'] as String?;
+        if (existingName == null || existingName.trim().isEmpty) {
+          profileMap['name'] = _fallbackName(firebaseUser.email);
+        }
+        
+        final user = UserModel.fromMap({
+          'uid': firebaseUser.uid,
+          ...profileMap,
+          if (profileMap['email'] == null) 'email': firebaseUser.email,
+        });
         _currentUser = user;
         _selectedCurrency =
             CurrencyInfo.findByCode(user.currencyCode) ?? _selectedCurrency;
         _hasSelectedCurrency = true;
         _onboardingComplete = user.onboardingComplete;
+        _monthlyIncome = user.monthlyIncome ?? _monthlyIncome;
         _preferences.setString(_currencyCodeKey, _selectedCurrency.code);
         _preferences.setBool(_onboardingKey, _onboardingComplete);
+        if (_monthlyIncome != null) {
+          _preferences.setDouble(_monthlyIncomeKey, _monthlyIncome!);
+        }
       } else {
-        _currentUser = null;
+        // Fallback to placeholder if profile document is empty/doesn't exist
+        if (_currentUser == null) {
+          _setPlaceholderUser(firebaseUser);
+        }
       }
 
       _settings = AppSettings.fromMap(settings);
@@ -252,6 +300,7 @@ class AppSessionController extends ChangeNotifier {
       onboardingComplete: _onboardingComplete,
       createdAt: DateTime.now(),
       fcmToken: null,
+      monthlyIncome: _monthlyIncome,
     );
     _initialized = true;
     notifyListeners();

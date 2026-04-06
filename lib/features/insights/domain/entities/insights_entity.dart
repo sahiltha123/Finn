@@ -1,6 +1,9 @@
+import '../../../goals/domain/entities/goal_entity.dart';
+import '../../../goals/domain/entities/goal_type.dart';
 import '../../../transactions/domain/entities/transaction_category.dart';
 import '../../../transactions/domain/entities/transaction_entity.dart';
 import '../../../transactions/domain/entities/transaction_type.dart';
+import '../../../goals/domain/usecases/predict_budget_exhaustion.dart';
 
 class InsightsEntity {
   const InsightsEntity({
@@ -27,6 +30,7 @@ class InsightsEntity {
 
   factory InsightsEntity.fromTransactions({
     required List<TransactionEntity> transactions,
+    required List<GoalEntity> goals,
     required DateTime month,
   }) {
     final monthTransactions = transactions
@@ -96,6 +100,8 @@ class InsightsEntity {
       totalExpense: expense,
       topCategory: topCategory,
       savingsRate: savingsRate,
+      goals: goals,
+      monthTransactions: monthTransactions,
     );
 
     return InsightsEntity(
@@ -116,8 +122,10 @@ class InsightsEntity {
     required double totalExpense,
     required TransactionCategory? topCategory,
     required double savingsRate,
+    required List<GoalEntity> goals,
+    required List<TransactionEntity> monthTransactions,
   }) {
-    return [
+    final tips = [
       if (topCategory != null)
         'Your biggest spend category this month is ${topCategory.label.toLowerCase()}.',
       if (savingsRate >= 0.25)
@@ -126,8 +134,25 @@ class InsightsEntity {
         'A small recurring transfer could help lift your savings rate this month.',
       if (totalExpense > totalIncome && totalIncome > 0)
         'Expenses are currently outpacing income, so this is a good week to trim one category.'
-      else
+      else if (totalIncome > 0)
         'You are still in the green this month. Keep the momentum going.',
     ];
+
+    // Add predictive tips
+    final predictor = PredictBudgetExhaustion();
+    final budgetGoals = goals.where((g) => g.type == GoalType.budget).toList();
+    for (final budget in budgetGoals) {
+      final prediction = predictor(budget, monthTransactions);
+      if (prediction != null && 
+          (prediction.risk == ExhaustionRisk.high || prediction.risk == ExhaustionRisk.exceeded) && 
+          prediction.predictedExhaustionDate != null) {
+        final dateStr = '${prediction.predictedExhaustionDate!.day}/${prediction.predictedExhaustionDate!.month}';
+        tips.add(
+          "You're spending ₹${prediction.burnRatePerDay.toStringAsFixed(0)}/day on ${budget.title}. Your budget might run out by $dateStr.",
+        );
+      }
+    }
+
+    return tips;
   }
 }

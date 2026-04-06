@@ -7,8 +7,8 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../shared/providers/currency_provider.dart';
 import '../../../../shared/widgets/finn_button.dart';
-import '../../../../shared/widgets/finn_loading_overlay.dart';
 import '../../../../shared/widgets/finn_snackbar.dart';
+import '../../../../shared/widgets/glass_container.dart';
 import '../providers/auth_providers.dart';
 import '../widgets/auth_form_field.dart';
 
@@ -26,6 +26,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  bool _isRegisterLoading = false;
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -37,102 +39,106 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authActionProvider);
-    final isLoading = authState.isLoading;
     final currency = ref.watch(selectedCurrencyProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create your Finn account')),
-      body: FinnLoadingOverlay(
-        isLoading: isLoading,
-        child: SafeArea(
+      body: SafeArea(
+        child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: FormBuilder(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'You are setting up Finn in ${currency.code}. You can change this later in profile.',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 24),
-                  AuthFormField(
-                    name: 'name',
-                    controller: _nameController,
-                    label: 'Full name',
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                        errorText: 'Name is required',
-                      ),
-                      FormBuilderValidators.minLength(
-                        3,
-                        errorText: 'Enter your name',
-                      ),
-                    ]),
-                  ),
-                  const SizedBox(height: 16),
-                  AuthFormField(
-                    name: 'email',
-                    controller: _emailController,
-                    label: 'Email',
-                    keyboardType: TextInputType.emailAddress,
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                        errorText: 'Email is required',
-                      ),
-                      FormBuilderValidators.email(
-                        errorText: 'Enter a valid email',
-                      ),
-                    ]),
-                  ),
-                  const SizedBox(height: 16),
-                  AuthFormField(
-                    name: 'password',
-                    controller: _passwordController,
-                    label: 'Password',
-                    obscureText: true,
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                        errorText: 'Password is required',
-                      ),
-                      FormBuilderValidators.minLength(
-                        4,
-                        errorText: 'Use at least 4 characters',
-                      ),
-                    ]),
-                  ),
-                  const SizedBox(height: 16),
-                  AuthFormField(
-                    name: 'confirm_password',
-                    controller: _confirmPasswordController,
-                    label: 'Confirm password',
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Confirm your password';
-                      }
-                      if (value != _passwordController.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  FinnButton(
-                    label: 'Create account',
-                    onPressed: isLoading ? null : _register,
-                    isLoading: isLoading,
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: TextButton(
-                      onPressed: () => context.go(AppRoutes.login),
-                      child: const Text('Already have an account? Sign in'),
+            padding: const EdgeInsets.all(24),
+            child: GlassContainer(
+              child: FormBuilder(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Create your Finn account',
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      'You are setting up Finn in ${currency.code}. You can change this later in profile.',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    const SizedBox(height: 32),
+                    AuthFormField(
+                      name: 'name',
+                      controller: _nameController,
+                      label: 'Full name',
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: 'Name is required',
+                        ),
+                        FormBuilderValidators.minLength(
+                          3,
+                          errorText: 'Enter your name',
+                        ),
+                      ]),
+                    ),
+                    const SizedBox(height: 16),
+                    AuthFormField(
+                      name: 'email',
+                      controller: _emailController,
+                      label: 'Email',
+                      keyboardType: TextInputType.emailAddress,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: 'Email is required',
+                        ),
+                        FormBuilderValidators.email(
+                          errorText: 'Enter a valid email',
+                        ),
+                      ]),
+                    ),
+                    const SizedBox(height: 16),
+                    AuthFormField(
+                      name: 'password',
+                      controller: _passwordController,
+                      label: 'Password',
+                      obscureText: true,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: 'Password is required',
+                        ),
+                        FormBuilderValidators.minLength(
+                          4,
+                          errorText: 'Use at least 4 characters',
+                        ),
+                      ]),
+                    ),
+                    const SizedBox(height: 16),
+                    AuthFormField(
+                      name: 'confirm_password',
+                      controller: _confirmPasswordController,
+                      label: 'Confirm password',
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Confirm your password';
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 32),
+                    FinnButton(
+                      label: 'Create account',
+                      onPressed: _isRegisterLoading ? null : _register,
+                      isLoading: _isRegisterLoading,
+                    ),
+                    const SizedBox(height: 24),
+                    Center(
+                      child: TextButton(
+                        onPressed: () => context.go(AppRoutes.login),
+                        child: const Text('Already have an account? Sign in'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -144,6 +150,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _register() async {
     final isValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (!isValid) return;
+    
+    setState(() => _isRegisterLoading = true);
     final currency = ref.read(selectedCurrencyProvider);
     final failure = await ref
         .read(authActionProvider.notifier)
@@ -154,6 +162,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           currency: currency,
         );
     if (!mounted) return;
+    setState(() => _isRegisterLoading = false);
+    
     if (failure != null) {
       showFinnSnackBar(context, message: failure.message);
       return;

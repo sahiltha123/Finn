@@ -13,6 +13,7 @@ import '../widgets/finn_tip_card.dart';
 import '../widgets/monthly_summary_cards.dart';
 import '../widgets/six_month_sparkline.dart';
 import '../widgets/weekly_bar_chart.dart';
+import '../widgets/health_score_card.dart';
 import '../../../transactions/domain/entities/transaction_category.dart';
 
 class InsightsScreen extends ConsumerStatefulWidget {
@@ -50,7 +51,7 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
               insights.categoryBreakdown.isNotEmpty;
 
           return ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
             children: [
               Row(
                 children: [
@@ -95,6 +96,14 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
                   ),
                 )
               else ...[
+                ref.watch(healthScoreProvider).when(
+                  data: (score) => Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: HealthScoreCard(score: score),
+                  ),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
                 MonthlySummaryCards(
                 income: insights.totalIncome,
                 expense: insights.totalExpense,
@@ -106,7 +115,10 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
               const SizedBox(height: 16),
               WeeklyBarChart(data: insights.weeklyBreakdown),
               const SizedBox(height: 16),
-              SixMonthSparkline(values: insights.sixMonthNet),
+              SixMonthSparkline(
+                values: insights.sixMonthNet,
+                month: month,
+              ),
               const SizedBox(height: 16),
               if (insights.topCategory != null)
                 Card(

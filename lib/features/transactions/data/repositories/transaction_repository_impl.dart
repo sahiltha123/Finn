@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 
 import '../../../../core/utils/analytics_service.dart';
 import '../../../../core/utils/goal_automation_service.dart';
@@ -29,6 +30,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
     required String uid,
     required TransactionEntity transaction,
   }) async {
+    final trace = FirebasePerformance.instance.newTrace('addTransaction');
+    await trace.start();
     try {
       await _datasource.addTransaction(uid, transaction);
       await _analyticsService.logTransactionAdded(transaction);
@@ -38,6 +41,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
       return left(StorageFailure(error.message));
     } catch (_) {
       return left(const UnknownFailure('Unable to save this transaction.'));
+    } finally {
+      await trace.stop();
     }
   }
 
@@ -46,6 +51,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
     required String uid,
     required String transactionId,
   }) async {
+    final trace = FirebasePerformance.instance.newTrace('deleteTransaction');
+    await trace.start();
     try {
       await _datasource.deleteTransaction(uid, transactionId);
       await _goalAutomationService.evaluateAll(uid);
@@ -54,6 +61,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
       return left(StorageFailure(error.message));
     } catch (_) {
       return left(const UnknownFailure('Unable to delete this transaction.'));
+    } finally {
+      await trace.stop();
     }
   }
 
@@ -62,6 +71,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
     required String uid,
     required TransactionEntity transaction,
   }) async {
+    final trace = FirebasePerformance.instance.newTrace('updateTransaction');
+    await trace.start();
     try {
       await _datasource.updateTransaction(uid, transaction);
       await _goalAutomationService.evaluateAll(uid);
@@ -70,6 +81,8 @@ class TransactionRepositoryImpl implements TransactionRepository {
       return left(StorageFailure(error.message));
     } catch (_) {
       return left(const UnknownFailure('Unable to update this transaction.'));
+    } finally {
+      await trace.stop();
     }
   }
 }

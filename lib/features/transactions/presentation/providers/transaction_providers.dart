@@ -10,6 +10,7 @@ import '../../domain/usecases/delete_transaction.dart';
 import '../../domain/usecases/filter_transactions.dart';
 import '../../domain/usecases/update_transaction.dart';
 import '../../domain/usecases/watch_transactions.dart';
+import '../../domain/usecases/export_transactions_pdf.dart';
 
 final transactionDatasourceProvider = Provider<TransactionFirestoreDatasource>((
   ref,
@@ -45,6 +46,10 @@ final deleteTransactionUseCaseProvider = Provider<DeleteTransaction>((ref) {
 
 final filterTransactionsUseCaseProvider = Provider<FilterTransactions>(
   (ref) => const FilterTransactions(),
+);
+
+final exportTransactionsPdfUseCaseProvider = Provider<ExportTransactionsPdf>(
+  (ref) => ExportTransactionsPdf(),
 );
 
 final transactionsProvider = StreamProvider((ref) {

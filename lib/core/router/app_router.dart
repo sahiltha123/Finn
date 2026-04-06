@@ -14,10 +14,12 @@ import '../../features/insights/presentation/screens/insights_screen.dart';
 import '../../features/transactions/presentation/screens/transactions_screen.dart';
 import '../../features/transactions/presentation/widgets/add_edit_transaction_sheet.dart';
 import '../../shared/providers/user_provider.dart';
+
+import '../../shared/widgets/glass_container.dart';
 import 'app_routes.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final session = ref.watch(appSessionProvider);
+  final session = ref.read(appSessionProvider);
 
   return GoRouter(
     initialLocation: AppRoutes.splash,
@@ -137,44 +139,75 @@ class _FinnShell extends StatelessWidget {
     final currentIndex = navigationShell.currentIndex;
 
     return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (index) {
-          navigationShell.goBranch(
-            index,
-            initialLocation: index == navigationShell.currentIndex,
-          );
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded),
-            label: 'Home',
+        body: navigationShell,
+        extendBody: true, // Allows body to flow under the NavigationBar
+        bottomNavigationBar: GlassContainer(
+          margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
+          padding: EdgeInsets.zero,
+          blurSigma: 24,
+          borderRadius: BorderRadius.circular(36),
+          child: NavigationBarTheme(
+            data: NavigationBarThemeData(
+              labelTextStyle: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    height: 1,
+                  );
+                }
+                return const TextStyle(
+                  fontSize: 10,
+                  height: 1,
+                );
+              }),
+            ),
+            child: NavigationBar(
+              height: 64,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              indicatorColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+              selectedIndex: currentIndex,
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              onDestinationSelected: (index) {
+                navigationShell.goBranch(
+                  index,
+                  initialLocation: index == navigationShell.currentIndex,
+                );
+              },
+              destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home_rounded),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.receipt_long_outlined),
+                selectedIcon: Icon(Icons.receipt_long_rounded),
+                label: 'Transactions',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.flag_outlined),
+                selectedIcon: Icon(Icons.flag_rounded),
+                label: 'Goals',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.insights_outlined),
+                selectedIcon: Icon(Icons.insights_rounded),
+                label: 'Insights',
+              ),
+            ],
           ),
-          NavigationDestination(
-            icon: Icon(Icons.receipt_long_outlined),
-            selectedIcon: Icon(Icons.receipt_long_rounded),
-            label: 'Transactions',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.flag_outlined),
-            selectedIcon: Icon(Icons.flag_rounded),
-            label: 'Goals',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.insights_outlined),
-            selectedIcon: Icon(Icons.insights_rounded),
-            label: 'Insights',
-          ),
-        ],
+        ),
       ),
       floatingActionButton: currentIndex == 0 || currentIndex == 1
           ? FloatingActionButton.extended(
+              heroTag: 'main_fab',
               onPressed: () {
                 showModalBottomSheet<void>(
                   context: context,
                   isScrollControlled: true,
+                  useRootNavigator: true,
                   builder: (context) => const AddEditTransactionSheet(),
                 );
               },

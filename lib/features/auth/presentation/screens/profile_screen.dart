@@ -9,6 +9,7 @@ import '../../../../shared/providers/user_provider.dart';
 import '../../../../shared/providers/service_providers.dart';
 import '../../../../shared/widgets/finn_card.dart';
 import '../../../../shared/widgets/finn_snackbar.dart';
+import '../../../transactions/presentation/providers/transaction_providers.dart';
 import '../providers/auth_providers.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -19,6 +20,8 @@ class ProfileScreen extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final session = ref.watch(appSessionProvider);
     final currency = ref.watch(selectedCurrencyProvider);
+    // Watch in build so data is ready when user taps export
+    ref.watch(transactionsProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
@@ -136,40 +139,90 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
-          FilledButton.tonalIcon(
-            onPressed: () async {
-              final confirmed = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Sign out?'),
-                  content: const Text('You can sign back in at any time.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('Cancel'),
-                    ),
-                    FilledButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text('Sign out'),
-                    ),
-                  ],
-                ),
-              );
-
-              if (confirmed != true) {
-                return;
-              }
-
-              final failure = await ref
-                  .read(authActionProvider.notifier)
-                  .signOut();
-              if (failure != null && context.mounted) {
-                showFinnSnackBar(context, message: failure.message);
-              }
-            },
-            icon: const Icon(Icons.logout_rounded),
-            label: const Text('Sign out'),
+          const SizedBox(height: 24),
+          Text(
+            'Data & Account',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
+          const SizedBox(height: 12),
+          FinnCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                ref.watch(transactionsProvider).when(
+                      data: (transactions) => ListTile(
+                        leading: const Icon(Icons.picture_as_pdf_rounded),
+                        title: const Text('Export PDF Report'),
+                        subtitle: const Text('Professional financial summary'),
+                        trailing: const Icon(Icons.chevron_right_rounded),
+                        onTap: () async {
+                          if (transactions.isEmpty) {
+                            showFinnSnackBar(context, message: 'No transactions to export.');
+                            return;
+                          }
+                          try {
+                            final name = user?.name ?? 'Finn User';
+                            final symbol = currency.symbol;
+                            await ref.read(exportTransactionsPdfUseCaseProvider)(transactions, name, symbol);
+                          } catch (e) {
+                            if (context.mounted) {
+                              showFinnSnackBar(context, message: 'PDF Export failed: $e');
+                            }
+                          }
+                        },
+                      ),
+                      loading: () => const ListTile(
+                        leading: Icon(Icons.picture_as_pdf_rounded),
+                        title: Text('Export PDF Report'),
+                        subtitle: Text('Checking transactions...'),
+                        trailing: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                        ),
+                      ),
+                      error: (err, _) => ListTile(
+                        leading: const Icon(Icons.picture_as_pdf_rounded),
+                        title: const Text('Export PDF Report'),
+                        subtitle: const Text('Sync error'),
+                        trailing: const Icon(Icons.error_outline_rounded, color: Colors.orange),
+                        onTap: () => showFinnSnackBar(context, message: 'Could not sync transactions: $err'),
+                      ),
+                    ),
+                const Divider(height: 1, indent: 56),
+                ListTile(
+                  leading: Icon(Icons.logout_rounded, color: Theme.of(context).colorScheme.error),
+                  title: Text('Sign out', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                  onTap: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Sign out?'),
+                        content: const Text('You can sign back in at any time.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Cancel'),
+                          ),
+                          FilledButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Sign out'),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (confirmed != true) return;
+
+                    final failure = await ref.read(authActionProvider.notifier).signOut();
+                    if (failure != null && context.mounted) {
+                      showFinnSnackBar(context, message: failure.message);
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 48),
         ],
       ),
     );

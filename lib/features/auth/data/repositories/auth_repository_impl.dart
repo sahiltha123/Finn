@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
@@ -23,6 +24,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
+    final trace = FirebasePerformance.instance.newTrace('signInWithEmail');
+    await trace.start();
     try {
       final result = await _datasource.signInWithEmail(
         email: email,
@@ -33,6 +36,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(AuthFailure(error.message));
     } catch (_) {
       return left(const UnknownFailure('Unable to sign in right now.'));
+    } finally {
+      await trace.stop();
     }
   }
 
@@ -40,13 +45,17 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, AppUser>> signInWithGoogle({
     required CurrencyInfo currency,
   }) async {
+    final trace = FirebasePerformance.instance.newTrace('signInWithGoogle');
+    await trace.start();
     try {
       final result = await _datasource.signInWithGoogle(currency: currency);
       return right(result);
     } on AuthException catch (error) {
       return left(AuthFailure(error.message));
-    } catch (_) {
-      return left(const UnknownFailure('Google sign-in is unavailable.'));
+    } catch (e) {
+      return left(UnknownFailure('Google sign-in failed: ${e.toString()}'));
+    } finally {
+      await trace.stop();
     }
   }
 
@@ -57,6 +66,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     required CurrencyInfo currency,
   }) async {
+    final trace = FirebasePerformance.instance.newTrace('signUpWithEmail');
+    await trace.start();
     try {
       final result = await _datasource.signUpWithEmail(
         name: name,
@@ -69,6 +80,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(AuthFailure(error.message));
     } catch (_) {
       return left(const UnknownFailure('Unable to create your account.'));
+    } finally {
+      await trace.stop();
     }
   }
 

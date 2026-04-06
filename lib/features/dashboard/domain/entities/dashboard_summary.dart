@@ -1,6 +1,8 @@
 import '../../../goals/domain/entities/goal_entity.dart';
 import '../../../transactions/domain/entities/transaction_entity.dart';
 import '../../../transactions/domain/entities/transaction_type.dart';
+import '../../../transactions/domain/entities/recurring_pattern.dart';
+import '../../../transactions/domain/usecases/detect_recurring_patterns.dart';
 
 class DashboardSummary {
   const DashboardSummary({
@@ -10,6 +12,7 @@ class DashboardSummary {
     required this.weeklySpending,
     required this.recentTransactions,
     required this.activeGoal,
+    required this.recurringPatterns,
   });
 
   final double totalBalance;
@@ -18,6 +21,7 @@ class DashboardSummary {
   final Map<String, double> weeklySpending;
   final List<TransactionEntity> recentTransactions;
   final GoalEntity? activeGoal;
+  final List<RecurringPattern> recurringPatterns;
 
   factory DashboardSummary.fromData({
     required List<TransactionEntity> transactions,
@@ -66,6 +70,9 @@ class DashboardSummary {
       activeGoal = sorted.first;
     }
 
+    final detectPatterns = DetectRecurringPatterns();
+    final recurringPatterns = detectPatterns.call(transactions);
+
     return DashboardSummary(
       totalBalance: totalBalance,
       monthIncome: monthIncome,
@@ -73,6 +80,7 @@ class DashboardSummary {
       weeklySpending: weekly,
       recentTransactions: transactions.take(5).toList(),
       activeGoal: activeGoal,
+      recurringPatterns: recurringPatterns,
     );
   }
 }

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" width="640" height="160">
+  <rect width="640" height="160" rx="16" fill="#1C1C2E"/>
+  <defs>
+    <linearGradient id="barGD" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#34A853"/>
+      <stop offset="100%" stop-color="#4ADE80"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Small icon -->
+  <rect x="16" y="16" width="128" height="128" rx="28" fill="#1A73E8"/>
+  <!-- F stem -->
+  <rect x="38" y="36" width="14" height="72" rx="4" fill="white"/>
+  <!-- F top bar -->
+  <rect x="38" y="36" width="54" height="14" rx="4" fill="white"/>
+  <!-- F middle bar -->
+  <rect x="38" y="72" width="40" height="12" rx="4" fill="white"/>
+  <!-- Growth bars from bottom (bottom = y=108) -->
+  <rect x="96"  y="88"  width="10" height="20" rx="3" fill="url(#barGD)" opacity="0.5"/>
+  <rect x="110" y="74"  width="10" height="34" rx="3" fill="url(#barGD)" opacity="0.75"/>
+  <rect x="124" y="58"  width="10" height="50" rx="3" fill="url(#barGD)"/>
+  <circle cx="129" cy="54" r="4" fill="white" opacity="0.88"/>
+
+  <!-- Wordmark -->
+  <text x="168" y="108"
+    font-family="system-ui,sans-serif"
+    font-size="88" font-weight="700"
+    fill="white" letter-spacing="-3">finn</text>
+  <text x="172" y="138"
+    font-family="system-ui,sans-serif"
+    font-size="18" font-weight="400"
+    fill="rgba(255,255,255,0.38)" letter-spacing="3">your money companion</text>
+</svg>

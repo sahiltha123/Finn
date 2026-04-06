@@ -9,6 +9,7 @@ class AppUser {
     required this.onboardingComplete,
     required this.createdAt,
     this.fcmToken,
+    this.monthlyIncome,
   });
 
   final String uid;
@@ -20,4 +21,5 @@ class AppUser {
   final bool onboardingComplete;
   final DateTime createdAt;
   final String? fcmToken;
+  final double? monthlyIncome;
 }

@@ -54,7 +54,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               .toList();
 
           return ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
             children: [
               Text(
                 'Active challenges',
@@ -127,10 +127,13 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
           onRetry: () => ref.invalidate(goalsProvider),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openCreateGoalSheet,
-        icon: const Icon(Icons.flag_rounded),
-        label: const Text('Create'),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 96),
+        child: FloatingActionButton.extended(
+          onPressed: _openCreateGoalSheet,
+          icon: const Icon(Icons.flag_rounded),
+          label: const Text('Create'),
+        ),
       ),
     );
   }
@@ -139,6 +142,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true,
       builder: (context) => CreateGoalSheet(
         onCreate: (goal) async {
           final user = ref.read(currentUserProvider);

@@ -13,6 +13,7 @@ class UserModel extends AppUser {
     required super.onboardingComplete,
     required super.createdAt,
     super.fcmToken,
+    super.monthlyIncome,
   });
 
   factory UserModel.fromMap(Map<String, Object?> map) {
@@ -33,6 +34,9 @@ class UserModel extends AppUser {
               ? DateTime.parse(createdAtValue as String)
               : DateTime.now()),
       fcmToken: map['fcmToken'] as String?,
+      monthlyIncome: map['monthlyIncome'] != null
+          ? (map['monthlyIncome'] as num).toDouble()
+          : null,
     );
   }
 
@@ -47,6 +51,7 @@ class UserModel extends AppUser {
       'onboardingComplete': onboardingComplete,
       'createdAt': Timestamp.fromDate(createdAt),
       'fcmToken': fcmToken,
+      if (monthlyIncome != null) 'monthlyIncome': monthlyIncome,
     };
   }
 
@@ -60,6 +65,7 @@ class UserModel extends AppUser {
     bool? onboardingComplete,
     DateTime? createdAt,
     String? fcmToken,
+    double? monthlyIncome,
   }) {
     return UserModel(
       uid: uid ?? this.uid,
@@ -71,6 +77,7 @@ class UserModel extends AppUser {
       onboardingComplete: onboardingComplete ?? this.onboardingComplete,
       createdAt: createdAt ?? this.createdAt,
       fcmToken: fcmToken ?? this.fcmToken,
+      monthlyIncome: monthlyIncome ?? this.monthlyIncome,
     );
   }
 }

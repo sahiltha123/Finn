@@ -30,8 +30,7 @@ class ExportTransactionsCsv {
     }
 
     final String csvContent =
-        '\uFEFF' +
-        rows.map((row) => row.map(_toCsvValue).join(',')).join('\r\n');
+        '\uFEFF${rows.map((row) => row.map(_toCsvValue).join(',')).join('\r\n')}';
 
     final directory = await getTemporaryDirectory();
     final fileName = 'finn_export_${DateTime.now().millisecondsSinceEpoch}.csv';

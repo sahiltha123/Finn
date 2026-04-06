@@ -125,9 +125,9 @@ class HealthScoreExplanationSheet extends StatelessWidget {
     final progress = points / 20.0;
 
     Color color = colors.error;
-    if (points >= 17)
+    if (points >= 17) {
       color = Colors.green;
-    else if (points >= 14)
+    } else if (points >= 14)
       color = Colors.blue;
     else if (points >= 10)
       color = Colors.orange;

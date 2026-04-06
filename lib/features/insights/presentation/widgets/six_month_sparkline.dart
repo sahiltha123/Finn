@@ -83,8 +83,9 @@ class SixMonthSparkline extends StatelessWidget {
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
                         final index = value.toInt();
-                        if (index < 0 || index >= 6)
+                        if (index < 0 || index >= 6) {
                           return const SizedBox.shrink();
+                        }
                         final target = DateTime(
                           month.year,
                           month.month - (5 - index),

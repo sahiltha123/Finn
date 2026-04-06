@@ -14,9 +14,9 @@ class HealthScoreCard extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     Color gaugeColor = AppColors.catHealth;
-    if (score.overallScore >= 85)
+    if (score.overallScore >= 85) {
       gaugeColor = AppColors.catSavings; // green
-    else if (score.overallScore >= 70)
+    } else if (score.overallScore >= 70)
       gaugeColor = AppColors.catTransport; // blueish
     else if (score.overallScore >= 50)
       gaugeColor = AppColors.catFood; // orangeish

@@ -117,12 +117,15 @@ class CalculateHealthScore {
   }
 
   String _generateInsight(int total, int savingsScore, int goalScore) {
-    if (savingsScore < 10)
+    if (savingsScore < 10) {
       return 'Your savings rate is low. Try the 50/30/20 rule.';
-    if (goalScore < 12)
+    }
+    if (goalScore < 12) {
       return 'Some of your goals are at risk. Check your "Goals" tab for details.';
-    if (total >= 85)
+    }
+    if (total >= 85) {
       return 'Incredible! You have strong control over your finances.';
+    }
     return 'Good momentum. Stay consistent to reach "Excellent" status.';
   }
 }

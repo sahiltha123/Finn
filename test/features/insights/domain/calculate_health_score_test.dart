@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finn/features/insights/domain/usecases/calculate_health_score.dart';
-import 'package:finn/features/insights/domain/entities/health_score.dart';
 import 'package:finn/features/transactions/domain/entities/transaction_entity.dart';
 import 'package:finn/features/transactions/domain/entities/transaction_type.dart';
 import 'package:finn/features/transactions/domain/entities/transaction_category.dart';

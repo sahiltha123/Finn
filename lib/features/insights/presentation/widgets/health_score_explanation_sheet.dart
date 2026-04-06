@@ -127,10 +127,11 @@ class HealthScoreExplanationSheet extends StatelessWidget {
     Color color = colors.error;
     if (points >= 17) {
       color = Colors.green;
-    } else if (points >= 14)
+    } else if (points >= 14) {
       color = Colors.blue;
-    else if (points >= 10)
+    } else if (points >= 10) {
       color = Colors.orange;
+    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),

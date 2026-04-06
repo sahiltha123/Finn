@@ -31,8 +31,8 @@ class UserModel extends AppUser {
       createdAt: createdAtValue is Timestamp
           ? createdAtValue.toDate()
           : (createdAtValue != null
-              ? DateTime.parse(createdAtValue as String)
-              : DateTime.now()),
+                ? DateTime.parse(createdAtValue as String)
+                : DateTime.now()),
       fcmToken: map['fcmToken'] as String?,
       monthlyIncome: map['monthlyIncome'] != null
           ? (map['monthlyIncome'] as num).toDouble()

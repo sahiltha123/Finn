@@ -143,10 +143,12 @@ class InsightsEntity {
     final budgetGoals = goals.where((g) => g.type == GoalType.budget).toList();
     for (final budget in budgetGoals) {
       final prediction = predictor(budget, monthTransactions);
-      if (prediction != null && 
-          (prediction.risk == ExhaustionRisk.high || prediction.risk == ExhaustionRisk.exceeded) && 
+      if (prediction != null &&
+          (prediction.risk == ExhaustionRisk.high ||
+              prediction.risk == ExhaustionRisk.exceeded) &&
           prediction.predictedExhaustionDate != null) {
-        final dateStr = '${prediction.predictedExhaustionDate!.day}/${prediction.predictedExhaustionDate!.month}';
+        final dateStr =
+            '${prediction.predictedExhaustionDate!.day}/${prediction.predictedExhaustionDate!.month}';
         tips.add(
           "You're spending ₹${prediction.burnRatePerDay.toStringAsFixed(0)}/day on ${budget.title}. Your budget might run out by $dateStr.",
         );

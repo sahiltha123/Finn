@@ -17,7 +17,8 @@ class CategoryDonutChart extends StatelessWidget {
     }
 
     return Semantics(
-      label: 'Spending breakdown by category. Top spends: ${entries.take(3).map((e) => e.key.label).join(", ")}.',
+      label:
+          'Spending breakdown by category. Top spends: ${entries.take(3).map((e) => e.key.label).join(", ")}.',
       container: true,
       child: FinnCard(
         child: Column(
@@ -63,7 +64,10 @@ class CategoryDonutChart extends StatelessWidget {
                     (entry) => Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircleAvatar(radius: 6, backgroundColor: entry.key.color),
+                        CircleAvatar(
+                          radius: 6,
+                          backgroundColor: entry.key.color,
+                        ),
                         const SizedBox(width: 6),
                         Text(entry.key.label),
                       ],

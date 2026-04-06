@@ -29,16 +29,12 @@ class SplashScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                'assets/images/logo.png',
-                width: 120,
-                height: 120,
-              ),
+              Image.asset('assets/images/logo.png', width: 120, height: 120),
               const SizedBox(height: 16),
               SvgPicture.asset(
-                isDark 
-                  ? 'assets/images/finn_wordmark_dark.svg' 
-                  : 'assets/images/finn_wordmark.svg',
+                isDark
+                    ? 'assets/images/finn_wordmark_dark.svg'
+                    : 'assets/images/finn_wordmark.svg',
                 height: 32,
               ),
               const SizedBox(height: 12),

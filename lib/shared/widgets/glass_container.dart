@@ -25,7 +25,7 @@ class GlassContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final isDark = colors.brightness == Brightness.dark;
-    
+
     // Crisp clean background: pure white in light mode, elevated dark grey in dark mode
     final fillColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final borderBase = isDark ? Colors.white : Colors.black;

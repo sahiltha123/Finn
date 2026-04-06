@@ -42,7 +42,8 @@ class GoalCard extends StatelessWidget {
     final prediction = PredictBudgetExhaustion().call(goal, transactions);
 
     return Semantics(
-      label: 'Goal: ${goal.title}. Progress: ${(progress.clamp(0.0, 1.0) * 100).round()}%. Status: ${status.name.titleCased}.',
+      label:
+          'Goal: ${goal.title}. Progress: ${(progress.clamp(0.0, 1.0) * 100).round()}%. Status: ${status.name.titleCased}.',
       container: true,
       child: FinnCard(
         child: Column(
@@ -106,20 +107,30 @@ class GoalCard extends StatelessWidget {
                 semanticsLabel: 'Goal health indicator',
               ),
             ],
-            if (prediction != null && (prediction.risk == ExhaustionRisk.high || prediction.risk == ExhaustionRisk.exceeded)) ...[
+            if (prediction != null &&
+                (prediction.risk == ExhaustionRisk.high ||
+                    prediction.risk == ExhaustionRisk.exceeded)) ...[
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.errorContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.error, size: 20),
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: Theme.of(context).colorScheme.error,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -143,9 +154,8 @@ class GoalCard extends StatelessWidget {
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        content: GoalCompletionCard(goal: goal),
-                      ),
+                      builder: (context) =>
+                          AlertDialog(content: GoalCompletionCard(goal: goal)),
                     );
                   },
                   icon: const Icon(Icons.stars_rounded),

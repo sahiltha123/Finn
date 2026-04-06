@@ -149,7 +149,9 @@ class ProfileScreen extends ConsumerWidget {
             padding: EdgeInsets.zero,
             child: Column(
               children: [
-                ref.watch(transactionsProvider).when(
+                ref
+                    .watch(transactionsProvider)
+                    .when(
                       data: (transactions) => ListTile(
                         leading: const Icon(Icons.picture_as_pdf_rounded),
                         title: const Text('Export PDF Report'),
@@ -157,16 +159,24 @@ class ProfileScreen extends ConsumerWidget {
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap: () async {
                           if (transactions.isEmpty) {
-                            showFinnSnackBar(context, message: 'No transactions to export.');
+                            showFinnSnackBar(
+                              context,
+                              message: 'No transactions to export.',
+                            );
                             return;
                           }
                           try {
                             final name = user?.name ?? 'Finn User';
                             final symbol = currency.symbol;
-                            await ref.read(exportTransactionsPdfUseCaseProvider)(transactions, name, symbol);
+                            await ref.read(
+                              exportTransactionsPdfUseCaseProvider,
+                            )(transactions, name, symbol);
                           } catch (e) {
                             if (context.mounted) {
-                              showFinnSnackBar(context, message: 'PDF Export failed: $e');
+                              showFinnSnackBar(
+                                context,
+                                message: 'PDF Export failed: $e',
+                              );
                             }
                           }
                         },
@@ -177,27 +187,47 @@ class ProfileScreen extends ConsumerWidget {
                         subtitle: Text('Checking transactions...'),
                         trailing: Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
                         ),
                       ),
                       error: (err, _) => ListTile(
                         leading: const Icon(Icons.picture_as_pdf_rounded),
                         title: const Text('Export PDF Report'),
                         subtitle: const Text('Sync error'),
-                        trailing: const Icon(Icons.error_outline_rounded, color: Colors.orange),
-                        onTap: () => showFinnSnackBar(context, message: 'Could not sync transactions: $err'),
+                        trailing: const Icon(
+                          Icons.error_outline_rounded,
+                          color: Colors.orange,
+                        ),
+                        onTap: () => showFinnSnackBar(
+                          context,
+                          message: 'Could not sync transactions: $err',
+                        ),
                       ),
                     ),
                 const Divider(height: 1, indent: 56),
                 ListTile(
-                  leading: Icon(Icons.logout_rounded, color: Theme.of(context).colorScheme.error),
-                  title: Text('Sign out', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                  leading: Icon(
+                    Icons.logout_rounded,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  title: Text(
+                    'Sign out',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
                   onTap: () async {
                     final confirmed = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('Sign out?'),
-                        content: const Text('You can sign back in at any time.'),
+                        content: const Text(
+                          'You can sign back in at any time.',
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(false),
@@ -213,7 +243,9 @@ class ProfileScreen extends ConsumerWidget {
 
                     if (confirmed != true) return;
 
-                    final failure = await ref.read(authActionProvider.notifier).signOut();
+                    final failure = await ref
+                        .read(authActionProvider.notifier)
+                        .signOut();
                     if (failure != null && context.mounted) {
                       showFinnSnackBar(context, message: failure.message);
                     }

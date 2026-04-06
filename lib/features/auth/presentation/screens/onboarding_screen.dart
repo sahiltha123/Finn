@@ -197,10 +197,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            '💸',
-            style: TextStyle(fontSize: 80),
-          ),
+          const Text('💸', style: TextStyle(fontSize: 80)),
           const SizedBox(height: 24),
           Text(
             'One quick thing —\nwhat\'s your monthly income?',
@@ -218,7 +215,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: TextField(
               controller: _incomeController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               style: Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
@@ -274,7 +273,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       type: GoalType.savings,
                       targetAmount: savings,
                       currentAmount: 0,
-                      deadline: DateTime(now.year, now.month + 1, 1).subtract(const Duration(days: 1)),
+                      deadline: DateTime(
+                        now.year,
+                        now.month + 1,
+                        1,
+                      ).subtract(const Duration(days: 1)),
                       icon: '💰',
                       colorHex: '0xFF34A853',
                       createdAt: now,

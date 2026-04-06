@@ -33,7 +33,8 @@ class BalanceCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: colors.onSurface.withValues(alpha: 0.8),
               ),
-              semanticsLabel: '', // Hide from screen reader as parent handles it
+              semanticsLabel:
+                  '', // Hide from screen reader as parent handles it
             ),
             const SizedBox(height: 8),
             Text(

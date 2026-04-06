@@ -58,16 +58,16 @@ final insightsProvider = StreamProvider<InsightsEntity>((ref) {
 final healthScoreProvider = Provider<AsyncValue<HealthScore>>((ref) {
   final transactionsAsync = ref.watch(transactionsProvider);
   final goalsAsync = ref.watch(goalsProvider);
-  
+
   if (transactionsAsync.isLoading || goalsAsync.isLoading) {
     return const AsyncLoading();
   }
-  
+
   final transactions = transactionsAsync.valueOrNull ?? [];
   final goals = goalsAsync.valueOrNull ?? [];
   final now = DateTime.now();
   final monthStr = '${now.year}_${now.month.toString().padLeft(2, '0')}';
-  
+
   try {
     final score = ref.read(calculateHealthScoreUseCaseProvider)(
       transactions: transactions,

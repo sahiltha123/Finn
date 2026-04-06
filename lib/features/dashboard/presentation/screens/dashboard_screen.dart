@@ -183,12 +183,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 goal: summary.activeGoal,
                 transactions: summary.recentTransactions,
               ),
-              if (summary.recurringPatterns.isNotEmpty && !_dismissedPatterns.contains(summary.recurringPatterns.first.id)) ...[
+              if (summary.recurringPatterns.isNotEmpty &&
+                  !_dismissedPatterns.contains(
+                    summary.recurringPatterns.first.id,
+                  )) ...[
                 const SizedBox(height: 16),
                 RecurringPatternTeaser(
                   patterns: summary.recurringPatterns,
                   currency: currency,
-                  onDismiss: (pattern) => setState(() => _dismissedPatterns.add(pattern.id)),
+                  onDismiss: (pattern) =>
+                      setState(() => _dismissedPatterns.add(pattern.id)),
                 ),
               ],
             ],

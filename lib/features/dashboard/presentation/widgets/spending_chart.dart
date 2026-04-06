@@ -37,13 +37,16 @@ class SpendingChart extends StatelessWidget {
                 BarChartData(
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
-                      getTooltipColor: (_) => Theme.of(context).colorScheme.primaryContainer,
+                      getTooltipColor: (_) =>
+                          Theme.of(context).colorScheme.primaryContainer,
                       tooltipRoundedRadius: 8,
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         return BarTooltipItem(
                           rod.toY.toStringAsFixed(0),
                           TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimaryContainer,
                             fontWeight: FontWeight.bold,
                           ),
                         );

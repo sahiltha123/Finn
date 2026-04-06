@@ -194,7 +194,8 @@ class AppSessionController extends ChangeNotifier {
         CurrencyInfo.defaultCurrency;
 
     final biometricLock = _preferences.getBool(_biometricLockKey) ?? false;
-    final notificationsEnabled = _preferences.getBool(_notificationsKey) ?? true;
+    final notificationsEnabled =
+        _preferences.getBool(_notificationsKey) ?? true;
 
     _monthlyIncome = _preferences.getDouble(_monthlyIncomeKey);
     _pendingInitialGoal = _preferences.getBool(_pendingInitialGoalKey) ?? false;
@@ -218,70 +219,72 @@ class AppSessionController extends ChangeNotifier {
 
     _setPlaceholderUser(firebaseUser);
 
-    _userSubscription = _userDocument(firebaseUser.uid).snapshots().listen((
-      snapshot,
-    ) {
-      final data = snapshot.data() ?? const <String, dynamic>{};
-      final profile = Map<String, Object?>.from(
-        (data['profile'] as Map<String, dynamic>?) ?? const <String, dynamic>{},
-      );
-      final settings = Map<String, Object?>.from(
-        (data['settings'] as Map<String, dynamic>?) ??
-            const <String, dynamic>{},
-      );
-
-      if (profile.isNotEmpty) {
-        final profileMap = Map<String, dynamic>.from(profile);
-        final existingName = profileMap['name'] as String?;
-        if (existingName == null || existingName.trim().isEmpty) {
-          profileMap['name'] = _fallbackName(firebaseUser.email);
-        }
-        
-        final user = UserModel.fromMap({
-          'uid': firebaseUser.uid,
-          ...profileMap,
-          if (profileMap['email'] == null) 'email': firebaseUser.email,
-        });
-        _currentUser = user;
-        _selectedCurrency =
-            CurrencyInfo.findByCode(user.currencyCode) ?? _selectedCurrency;
-        _hasSelectedCurrency = true;
-        _onboardingComplete = user.onboardingComplete;
-        _monthlyIncome = user.monthlyIncome ?? _monthlyIncome;
-        _preferences.setString(_currencyCodeKey, _selectedCurrency.code);
-        _preferences.setBool(_onboardingKey, _onboardingComplete);
-        if (_monthlyIncome != null) {
-          _preferences.setDouble(_monthlyIncomeKey, _monthlyIncome!);
-        }
-      } else {
-        // Fallback to placeholder if profile document is empty/doesn't exist
-        if (_currentUser == null) {
-          _setPlaceholderUser(firebaseUser);
-        }
-      }
-
-      _settings = AppSettings.fromMap(settings);
-      _themeMode = _settings.darkMode ? ThemeMode.dark : ThemeMode.light;
-      _preferences.setBool(_themeModeKey, _settings.darkMode);
-      _preferences.setBool(_biometricLockKey, _settings.biometricLock);
-      _preferences.setBool(_notificationsKey, _settings.notificationsEnabled);
-      _initialized = true;
-      notifyListeners();
-
-      final currentUser = _currentUser;
-      if (currentUser != null) {
-        unawaited(
-          _weeklySummaryService.notifyIfNeeded(
-            uid: currentUser.uid,
-            currencySymbol: currentUser.currencySymbol,
-            notificationsEnabled: _settings.notificationsEnabled,
-          ),
+    _userSubscription = _userDocument(firebaseUser.uid).snapshots().listen(
+      (snapshot) {
+        final data = snapshot.data() ?? const <String, dynamic>{};
+        final profile = Map<String, Object?>.from(
+          (data['profile'] as Map<String, dynamic>?) ??
+              const <String, dynamic>{},
         );
-      }
-    }, onError: (error, stackTrace) {
-      _initialized = true;
-      notifyListeners();
-    });
+        final settings = Map<String, Object?>.from(
+          (data['settings'] as Map<String, dynamic>?) ??
+              const <String, dynamic>{},
+        );
+
+        if (profile.isNotEmpty) {
+          final profileMap = Map<String, dynamic>.from(profile);
+          final existingName = profileMap['name'] as String?;
+          if (existingName == null || existingName.trim().isEmpty) {
+            profileMap['name'] = _fallbackName(firebaseUser.email);
+          }
+
+          final user = UserModel.fromMap({
+            'uid': firebaseUser.uid,
+            ...profileMap,
+            if (profileMap['email'] == null) 'email': firebaseUser.email,
+          });
+          _currentUser = user;
+          _selectedCurrency =
+              CurrencyInfo.findByCode(user.currencyCode) ?? _selectedCurrency;
+          _hasSelectedCurrency = true;
+          _onboardingComplete = user.onboardingComplete;
+          _monthlyIncome = user.monthlyIncome ?? _monthlyIncome;
+          _preferences.setString(_currencyCodeKey, _selectedCurrency.code);
+          _preferences.setBool(_onboardingKey, _onboardingComplete);
+          if (_monthlyIncome != null) {
+            _preferences.setDouble(_monthlyIncomeKey, _monthlyIncome!);
+          }
+        } else {
+          // Fallback to placeholder if profile document is empty/doesn't exist
+          if (_currentUser == null) {
+            _setPlaceholderUser(firebaseUser);
+          }
+        }
+
+        _settings = AppSettings.fromMap(settings);
+        _themeMode = _settings.darkMode ? ThemeMode.dark : ThemeMode.light;
+        _preferences.setBool(_themeModeKey, _settings.darkMode);
+        _preferences.setBool(_biometricLockKey, _settings.biometricLock);
+        _preferences.setBool(_notificationsKey, _settings.notificationsEnabled);
+        _initialized = true;
+        notifyListeners();
+
+        final currentUser = _currentUser;
+        if (currentUser != null) {
+          unawaited(
+            _weeklySummaryService.notifyIfNeeded(
+              uid: currentUser.uid,
+              currencySymbol: currentUser.currencySymbol,
+              notificationsEnabled: _settings.notificationsEnabled,
+            ),
+          );
+        }
+      },
+      onError: (error, stackTrace) {
+        _initialized = true;
+        notifyListeners();
+      },
+    );
 
     unawaited(_syncMessagingToken(firebaseUser.uid));
   }
@@ -289,8 +292,7 @@ class AppSessionController extends ChangeNotifier {
   void _setPlaceholderUser(User firebaseUser) {
     _currentUser = UserModel(
       uid: firebaseUser.uid,
-      name:
-          firebaseUser.displayName?.trim().isNotEmpty == true
+      name: firebaseUser.displayName?.trim().isNotEmpty == true
           ? firebaseUser.displayName!.trim()
           : _fallbackName(firebaseUser.email),
       email: firebaseUser.email ?? '',

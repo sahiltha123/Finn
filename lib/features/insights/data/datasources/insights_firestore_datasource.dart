@@ -79,7 +79,8 @@ class InsightsFirestoreDatasource {
     Stream<List<TransactionEntity>> txns,
     Stream<List<GoalEntity>> goals,
   ) {
-    final controller = StreamController<Tuple2<List<TransactionEntity>, List<GoalEntity>>>();
+    final controller =
+        StreamController<Tuple2<List<TransactionEntity>, List<GoalEntity>>>();
     List<TransactionEntity>? lastTxns;
     List<GoalEntity>? lastGoals;
 
@@ -89,8 +90,14 @@ class InsightsFirestoreDatasource {
       }
     }
 
-    final sub1 = txns.listen((t) { lastTxns = t; update(); });
-    final sub2 = goals.listen((g) { lastGoals = g; update(); });
+    final sub1 = txns.listen((t) {
+      lastTxns = t;
+      update();
+    });
+    final sub2 = goals.listen((g) {
+      lastGoals = g;
+      update();
+    });
 
     controller.onCancel = () {
       sub1.cancel();

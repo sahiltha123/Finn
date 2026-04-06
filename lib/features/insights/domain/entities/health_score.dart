@@ -17,7 +17,7 @@ class HealthScore extends Equatable {
 
   /// Scale from 0 to 100
   final int overallScore;
-  
+
   /// Sub-dimension scores (each 0-20)
   final int savingsRateScore;
   final int goalAdherenceScore;
@@ -38,13 +38,13 @@ class HealthScore extends Equatable {
 
   @override
   List<Object?> get props => [
-        overallScore,
-        savingsRateScore,
-        goalAdherenceScore,
-        spendingConsistencyScore,
-        budgetDisciplineScore,
-        incomeGrowthScore,
-        tier,
-        primaryInsight,
-      ];
+    overallScore,
+    savingsRateScore,
+    goalAdherenceScore,
+    spendingConsistencyScore,
+    budgetDisciplineScore,
+    incomeGrowthScore,
+    tier,
+    primaryInsight,
+  ];
 }

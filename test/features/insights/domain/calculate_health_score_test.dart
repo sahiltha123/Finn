@@ -70,7 +70,7 @@ void main() {
       );
 
       expect(score.overallScore, greaterThan(70));
-      expect(score.savingsRateScore, greaterThan(0)); 
+      expect(score.savingsRateScore, greaterThan(0));
     });
   });
 }

@@ -26,20 +26,32 @@ class RecurringPatternTeaser extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     return Semantics(
-      label: 'We noticed a recurring pattern. You often spend around ${CurrencyFormatter.format(pattern.estimatedAmount, currency)} on ${pattern.title}.',
+      label:
+          'We noticed a recurring pattern. You often spend around ${CurrencyFormatter.format(pattern.estimatedAmount, currency)} on ${pattern.title}.',
       child: FinnCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.auto_awesome_rounded, color: colors.primary, size: 20),
+                Icon(
+                  Icons.auto_awesome_rounded,
+                  color: colors.primary,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
-                Text('Detected Pattern', style: Theme.of(context).textTheme.titleSmall),
+                Text(
+                  'Detected Pattern',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
                 const Spacer(),
                 GestureDetector(
                   onTap: () => onDismiss(pattern),
-                  child: Icon(Icons.close_rounded, size: 20, color: colors.onSurfaceVariant),
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: 20,
+                    color: colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -47,7 +59,9 @@ class RecurringPatternTeaser extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: pattern.category.color.withValues(alpha: 0.18),
+                  backgroundColor: pattern.category.color.withValues(
+                    alpha: 0.18,
+                  ),
                   child: Icon(
                     pattern.category.icon,
                     color: pattern.category.color,
@@ -58,13 +72,16 @@ class RecurringPatternTeaser extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(pattern.title, style: Theme.of(context).textTheme.titleMedium),
+                      Text(
+                        pattern.title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       const SizedBox(height: 4),
                       Text(
                         'Roughly ${CurrencyFormatter.format(pattern.estimatedAmount, currency)} soon',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: colors.onSurface.withValues(alpha: 0.7),
-                            ),
+                          color: colors.onSurface.withValues(alpha: 0.7),
+                        ),
                       ),
                     ],
                   ),

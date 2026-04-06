@@ -6,7 +6,7 @@ import '../../../../shared/widgets/finn_card.dart';
 
 class SixMonthSparkline extends StatelessWidget {
   const SixMonthSparkline({
-    super.key, 
+    super.key,
     required this.values,
     required this.month,
   });
@@ -61,7 +61,10 @@ class SixMonthSparkline extends StatelessWidget {
                         strokeWidth: 2,
                       );
                     }
-                    return const FlLine(color: Colors.transparent, strokeWidth: 0);
+                    return const FlLine(
+                      color: Colors.transparent,
+                      strokeWidth: 0,
+                    );
                   },
                 ),
                 borderData: FlBorderData(show: false),
@@ -80,8 +83,13 @@ class SixMonthSparkline extends StatelessWidget {
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
                         final index = value.toInt();
-                        if (index < 0 || index >= 6) return const SizedBox.shrink();
-                        final target = DateTime(month.year, month.month - (5 - index), 1);
+                        if (index < 0 || index >= 6)
+                          return const SizedBox.shrink();
+                        final target = DateTime(
+                          month.year,
+                          month.month - (5 - index),
+                          1,
+                        );
                         return Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Text(

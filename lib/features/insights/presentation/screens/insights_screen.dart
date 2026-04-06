@@ -96,47 +96,49 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
                   ),
                 )
               else ...[
-                ref.watch(healthScoreProvider).when(
-                  data: (score) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: HealthScoreCard(score: score),
-                  ),
-                  loading: () => const SizedBox.shrink(),
-                  error: (_, __) => const SizedBox.shrink(),
-                ),
+                ref
+                    .watch(healthScoreProvider)
+                    .when(
+                      data: (score) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: HealthScoreCard(score: score),
+                      ),
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, __) => const SizedBox.shrink(),
+                    ),
                 MonthlySummaryCards(
-                income: insights.totalIncome,
-                expense: insights.totalExpense,
-                savingsRate: insights.savingsRate,
-                currency: currency,
-              ),
-              const SizedBox(height: 16),
-              CategoryDonutChart(data: insights.categoryBreakdown),
-              const SizedBox(height: 16),
-              WeeklyBarChart(data: insights.weeklyBreakdown),
-              const SizedBox(height: 16),
-              SixMonthSparkline(
-                values: insights.sixMonthNet,
-                month: month,
-              ),
-              const SizedBox(height: 16),
-              if (insights.topCategory != null)
-                Card(
-                  child: ListTile(
-                    leading: Icon(insights.topCategory!.icon),
-                    title: Text('Top category'),
-                    subtitle: Text(insights.topCategory!.label),
+                  income: insights.totalIncome,
+                  expense: insights.totalExpense,
+                  savingsRate: insights.savingsRate,
+                  currency: currency,
+                ),
+                const SizedBox(height: 16),
+                CategoryDonutChart(data: insights.categoryBreakdown),
+                const SizedBox(height: 16),
+                WeeklyBarChart(data: insights.weeklyBreakdown),
+                const SizedBox(height: 16),
+                SixMonthSparkline(values: insights.sixMonthNet, month: month),
+                const SizedBox(height: 16),
+                if (insights.topCategory != null)
+                  Card(
+                    child: ListTile(
+                      leading: Icon(insights.topCategory!.icon),
+                      title: Text('Top category'),
+                      subtitle: Text(insights.topCategory!.label),
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                Text(
+                  'Finn tips',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                ...tips.map(
+                  (tip) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: FinnTipCard(tip: tip),
                   ),
                 ),
-              const SizedBox(height: 16),
-              Text('Finn tips', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 12),
-              ...tips.map(
-                (tip) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: FinnTipCard(tip: tip),
-                ),
-              ),
               ],
             ],
           );

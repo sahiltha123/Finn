@@ -124,7 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _signIn() async {
     final isValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (!isValid) return;
-    
+
     setState(() => _isEmailLoading = true);
     final failure = await ref
         .read(authActionProvider.notifier)
@@ -134,7 +134,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
     if (!mounted) return;
     setState(() => _isEmailLoading = false);
-    
+
     if (failure != null) {
       showFinnSnackBar(context, message: failure.message);
       return;
@@ -150,7 +150,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         .signInWithGoogle(currency: currency);
     if (!mounted) return;
     setState(() => _isGoogleLoading = false);
-    
+
     if (failure != null) {
       showFinnSnackBar(context, message: failure.message);
       return;

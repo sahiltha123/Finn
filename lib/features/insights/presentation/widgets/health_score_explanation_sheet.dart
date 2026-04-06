@@ -24,7 +24,10 @@ class HealthScoreExplanationSheet extends StatelessWidget {
                   color: colors.primaryContainer,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.analytics_rounded, color: colors.onPrimaryContainer),
+                child: Icon(
+                  Icons.analytics_rounded,
+                  color: colors.onPrimaryContainer,
+                ),
               ),
               const SizedBox(width: 16),
               Column(
@@ -47,11 +50,36 @@ class HealthScoreExplanationSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 32),
-          _buildScoreRow(context, 'Savings Rate', score.savingsRateScore, 'Target: 20%+ of income'),
-          _buildScoreRow(context, 'Goal Adherence', score.goalAdherenceScore, '% of active goals on track'),
-          _buildScoreRow(context, 'Budget Discipline', score.budgetDisciplineScore, 'Staying within your limits'),
-          _buildScoreRow(context, 'Consistency', score.spendingConsistencyScore, 'Weekly spending variance'),
-          _buildScoreRow(context, 'Income Growth', score.incomeGrowthScore, 'MoM income trending'),
+          _buildScoreRow(
+            context,
+            'Savings Rate',
+            score.savingsRateScore,
+            'Target: 20%+ of income',
+          ),
+          _buildScoreRow(
+            context,
+            'Goal Adherence',
+            score.goalAdherenceScore,
+            '% of active goals on track',
+          ),
+          _buildScoreRow(
+            context,
+            'Budget Discipline',
+            score.budgetDisciplineScore,
+            'Staying within your limits',
+          ),
+          _buildScoreRow(
+            context,
+            'Consistency',
+            score.spendingConsistencyScore,
+            'Weekly spending variance',
+          ),
+          _buildScoreRow(
+            context,
+            'Income Growth',
+            score.incomeGrowthScore,
+            'MoM income trending',
+          ),
           const SizedBox(height: 24),
           Container(
             padding: const EdgeInsets.all(16),
@@ -87,14 +115,22 @@ class HealthScoreExplanationSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreRow(BuildContext context, String label, int points, String sub) {
+  Widget _buildScoreRow(
+    BuildContext context,
+    String label,
+    int points,
+    String sub,
+  ) {
     final colors = Theme.of(context).colorScheme;
     final progress = points / 20.0;
-    
+
     Color color = colors.error;
-    if (points >= 17) color = Colors.green;
-    else if (points >= 14) color = Colors.blue;
-    else if (points >= 10) color = Colors.orange;
+    if (points >= 17)
+      color = Colors.green;
+    else if (points >= 14)
+      color = Colors.blue;
+    else if (points >= 10)
+      color = Colors.orange;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -105,11 +141,21 @@ class HealthScoreExplanationSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(label, style: Theme.of(context).textTheme.titleSmall),
-              Text('$points/20', style: Theme.of(context).textTheme.titleSmall?.copyWith(color: color)),
+              Text(
+                '$points/20',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(color: color),
+              ),
             ],
           ),
           const SizedBox(height: 4),
-          Text(sub, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
+          Text(
+            sub,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+          ),
           const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),

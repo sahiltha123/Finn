@@ -18,7 +18,7 @@ void main() {
       // Month 2: 60 days ago
       final month1 = now.subtract(const Duration(days: 30));
       final month2 = now.subtract(const Duration(days: 60));
-      
+
       final transactions = [
         TransactionEntity(
           id: '1',
@@ -49,17 +49,25 @@ void main() {
 
     test('should not detect pattern for random intervals', () {
       final now = DateTime.now();
-      
+
       final transactions = [
         TransactionEntity(
-          id: '1', amount: 50, date: now.subtract(const Duration(days: 5)),
-          type: TransactionType.expense, category: TransactionCategory.food,
-          createdAt: now, updatedAt: now,
+          id: '1',
+          amount: 50,
+          date: now.subtract(const Duration(days: 5)),
+          type: TransactionType.expense,
+          category: TransactionCategory.food,
+          createdAt: now,
+          updatedAt: now,
         ),
         TransactionEntity(
-          id: '2', amount: 50, date: now.subtract(const Duration(days: 20)),
-          type: TransactionType.expense, category: TransactionCategory.food,
-          createdAt: now, updatedAt: now,
+          id: '2',
+          amount: 50,
+          date: now.subtract(const Duration(days: 20)),
+          type: TransactionType.expense,
+          category: TransactionCategory.food,
+          createdAt: now,
+          updatedAt: now,
         ),
       ];
 

@@ -16,10 +16,6 @@ class FinnCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassContainer(
-      padding: padding,
-      margin: margin,
-      child: child,
-    );
+    return GlassContainer(padding: padding, margin: margin, child: child);
   }
 }

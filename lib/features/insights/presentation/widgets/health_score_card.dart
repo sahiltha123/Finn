@@ -12,15 +12,20 @@ class HealthScoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    
+
     Color gaugeColor = AppColors.catHealth;
-    if (score.overallScore >= 85) gaugeColor = AppColors.catSavings; // green
-    else if (score.overallScore >= 70) gaugeColor = AppColors.catTransport; // blueish
-    else if (score.overallScore >= 50) gaugeColor = AppColors.catFood; // orangeish
-    else gaugeColor = AppColors.catEntertain; // redish
+    if (score.overallScore >= 85)
+      gaugeColor = AppColors.catSavings; // green
+    else if (score.overallScore >= 70)
+      gaugeColor = AppColors.catTransport; // blueish
+    else if (score.overallScore >= 50)
+      gaugeColor = AppColors.catFood; // orangeish
+    else
+      gaugeColor = AppColors.catEntertain; // redish
 
     return Semantics(
-      label: 'Financial Health Score: ${score.overallScore} out of 100. Category: ${score.tier}.',
+      label:
+          'Financial Health Score: ${score.overallScore} out of 100. Category: ${score.tier}.',
       button: true,
       onTapHint: 'Show score breakdown',
       child: GestureDetector(
@@ -37,11 +42,21 @@ class HealthScoreCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.monitor_heart_rounded, color: colors.primary, size: 24),
+                  Icon(
+                    Icons.monitor_heart_rounded,
+                    color: colors.primary,
+                    size: 24,
+                  ),
                   const SizedBox(width: 8),
-                  Text('Financial Health', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Financial Health',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const Spacer(),
-                  Icon(Icons.chevron_right_rounded, color: colors.onSurfaceVariant),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: colors.onSurfaceVariant,
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
@@ -66,16 +81,16 @@ class HealthScoreCard extends StatelessWidget {
                       children: [
                         Text(
                           '${score.overallScore}',
-                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: colors.onSurface,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.displaySmall
+                              ?.copyWith(
+                                color: colors.onSurface,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         Text(
                           score.tier,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colors.onSurfaceVariant,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: colors.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -86,9 +101,21 @@ class HealthScoreCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                   _buildMetric(context, 'Savings', '${score.savingsRateScore}/20'),
-                   _buildMetric(context, 'Discipline', '${score.budgetDisciplineScore}/20'),
-                   _buildMetric(context, 'Adherence', '${score.goalAdherenceScore}/20'),
+                  _buildMetric(
+                    context,
+                    'Savings',
+                    '${score.savingsRateScore}/20',
+                  ),
+                  _buildMetric(
+                    context,
+                    'Discipline',
+                    '${score.budgetDisciplineScore}/20',
+                  ),
+                  _buildMetric(
+                    context,
+                    'Adherence',
+                    '${score.goalAdherenceScore}/20',
+                  ),
                 ],
               ),
             ],
@@ -100,19 +127,16 @@ class HealthScoreCard extends StatelessWidget {
 
   Widget _buildMetric(BuildContext context, String label, String value) {
     return Column(
-       mainAxisSize: MainAxisSize.min,
-       children: [
-         Text(
-           value,
-           style: Theme.of(context).textTheme.titleMedium,
-         ),
-         Text(
-           label,
-           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-             color: Theme.of(context).colorScheme.onSurfaceVariant,
-           ),
-         ),
-       ],
-     );
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(value, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
   }
 }

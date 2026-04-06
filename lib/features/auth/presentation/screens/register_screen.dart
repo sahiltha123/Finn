@@ -150,7 +150,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _register() async {
     final isValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (!isValid) return;
-    
+
     setState(() => _isRegisterLoading = true);
     final currency = ref.read(selectedCurrencyProvider);
     final failure = await ref
@@ -163,7 +163,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         );
     if (!mounted) return;
     setState(() => _isRegisterLoading = false);
-    
+
     if (failure != null) {
       showFinnSnackBar(context, message: failure.message);
       return;

@@ -22,21 +22,26 @@ class _GoalCompletionCardState extends State<GoalCompletionCard> {
 
   Future<void> _shareGoal() async {
     try {
-      final boundary = _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      final boundary =
+          _globalKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
       if (boundary == null) return;
 
       final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
       final Uint8List pngBytes = byteData!.buffer.asUint8List();
 
       final directory = await getTemporaryDirectory();
-      final imagePath = await File('${directory.path}/goal_accomplished_${DateTime.now().millisecondsSinceEpoch}.png').create();
+      final imagePath = await File(
+        '${directory.path}/goal_accomplished_${DateTime.now().millisecondsSinceEpoch}.png',
+      ).create();
       await imagePath.writeAsBytes(pngBytes);
 
-      await Share.shareXFiles(
-        [XFile(imagePath.path)],
-        text: 'I just crushed my goal in Finn! 🚀 Goal: ${widget.goal.title}',
-      );
+      await Share.shareXFiles([
+        XFile(imagePath.path),
+      ], text: 'I just crushed my goal in Finn! 🚀 Goal: ${widget.goal.title}');
     } catch (e) {
       debugPrint('Error sharing goal: $e');
     }
@@ -85,7 +90,11 @@ class _GoalCompletionCardState extends State<GoalCompletionCard> {
                         color: colors.primary,
                       ),
                     ),
-                    Icon(Icons.auto_awesome_rounded, color: colors.primary, size: 16),
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      color: colors.primary,
+                      size: 16,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 40),

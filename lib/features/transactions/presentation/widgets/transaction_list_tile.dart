@@ -26,10 +26,12 @@ class TransactionListTile extends StatelessWidget {
         ? Theme.of(context).colorScheme.secondary
         : Theme.of(context).colorScheme.error;
 
-    final amountText = '${isIncome ? '+' : '-'}${CurrencyFormatter.format(transaction.amount, currency)}';
-    
+    final amountText =
+        '${isIncome ? '+' : '-'}${CurrencyFormatter.format(transaction.amount, currency)}';
+
     return Semantics(
-      label: '${transaction.category.label}, ${isIncome ? "income" : "expense"} of $amountText. Notes: ${transaction.notes ?? "None"}',
+      label:
+          '${transaction.category.label}, ${isIncome ? "income" : "expense"} of $amountText. Notes: ${transaction.notes ?? "None"}',
       button: true,
       onTapHint: 'Edit transaction',
       child: ListTile(

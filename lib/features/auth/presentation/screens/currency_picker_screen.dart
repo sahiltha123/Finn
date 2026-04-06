@@ -80,10 +80,12 @@ class _CurrencyPickerScreenState extends ConsumerState<CurrencyPickerScreen> {
                   : ListView.separated(
                       itemBuilder: (context, index) {
                         final currency = currencies[index];
-                        final selected = currency.code == _selectedCurrency.code;
+                        final selected =
+                            currency.code == _selectedCurrency.code;
                         return InkWell(
                           borderRadius: BorderRadius.circular(28),
-                          onTap: () => setState(() => _selectedCurrency = currency),
+                          onTap: () =>
+                              setState(() => _selectedCurrency = currency),
                           child: FinnCard(
                             child: Row(
                               children: [
@@ -91,13 +93,16 @@ class _CurrencyPickerScreenState extends ConsumerState<CurrencyPickerScreen> {
                                   backgroundColor: Theme.of(context)
                                       .colorScheme
                                       .primary
-                                      .withValues(alpha: selected ? 0.22 : 0.12),
+                                      .withValues(
+                                        alpha: selected ? 0.22 : 0.12,
+                                      ),
                                   child: Text(currency.symbol.trim()),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         currency.label,
@@ -107,7 +112,9 @@ class _CurrencyPickerScreenState extends ConsumerState<CurrencyPickerScreen> {
                                       ),
                                       Text(
                                         currency.code,
-                                        style: Theme.of(context).textTheme.bodyMedium,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
                                       ),
                                     ],
                                   ),
@@ -115,7 +122,9 @@ class _CurrencyPickerScreenState extends ConsumerState<CurrencyPickerScreen> {
                                 if (selected)
                                   Icon(
                                     Icons.check_circle_rounded,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                               ],
                             ),

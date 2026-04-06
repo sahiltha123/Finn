@@ -86,11 +86,7 @@ class AppTheme {
         ),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return IconThemeData(
-              color: scheme.primary,
-              size: 28,
-              weight: 600,
-            );
+            return IconThemeData(color: scheme.primary, size: 28, weight: 600);
           }
           return IconThemeData(color: scheme.onSurfaceVariant, size: 24);
         }),

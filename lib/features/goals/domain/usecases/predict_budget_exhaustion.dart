@@ -21,7 +21,10 @@ class ExhaustionPrediction {
 
 class PredictBudgetExhaustion {
   /// Predicts if a [goal] (budget/no-spend) is at risk based on [transactions].
-  ExhaustionPrediction? call(GoalEntity goal, List<TransactionEntity> transactions) {
+  ExhaustionPrediction? call(
+    GoalEntity goal,
+    List<TransactionEntity> transactions,
+  ) {
     if (goal.type != GoalType.budget && goal.type != GoalType.noSpend) {
       return null;
     }
@@ -31,9 +34,11 @@ class PredictBudgetExhaustion {
 
     final now = DateTime.now();
     // Default to end of month for simple budget tracking
-    final deadline = goal.deadline ?? DateTime(now.year, now.month + 1, 1).subtract(const Duration(days: 1));
+    final deadline =
+        goal.deadline ??
+        DateTime(now.year, now.month + 1, 1).subtract(const Duration(days: 1));
     final startDate = goal.startDate ?? DateTime(now.year, now.month, 1);
-    
+
     if (now.isAfter(deadline)) return null;
 
     // Filter transactions relevant to this budget
@@ -44,9 +49,13 @@ class PredictBudgetExhaustion {
       return true;
     }).toList();
 
-    double totalSpent = relevantTransactions.fold(0.0, (sum, t) => sum + t.amount);
-    
-    final daysElapsed = now.difference(startDate).inDays + 1; // +1 to include today
+    double totalSpent = relevantTransactions.fold(
+      0.0,
+      (sum, t) => sum + t.amount,
+    );
+
+    final daysElapsed =
+        now.difference(startDate).inDays + 1; // +1 to include today
     final daysRemaining = deadline.difference(now).inDays;
 
     if (totalSpent >= targetAmount) {

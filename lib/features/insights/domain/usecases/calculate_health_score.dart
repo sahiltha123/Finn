@@ -41,7 +41,9 @@ class CalculateHealthScore {
     int goalScore = 15; // default if no goals
     if (activeGoals.isNotEmpty) {
       final onTrack = activeGoals
-          .where((g) => g.status(transactions, DateTime.now()) == GoalStatus.onTrack)
+          .where(
+            (g) => g.status(transactions, DateTime.now()) == GoalStatus.onTrack,
+          )
           .length;
       goalScore = ((onTrack / activeGoals.length) * 20).round();
     }
@@ -55,7 +57,9 @@ class CalculateHealthScore {
     int budgetScore = 15; // default if no budgets
     if (budgetGoals.isNotEmpty) {
       final notExceeded = budgetGoals
-          .where((g) => g.status(transactions, DateTime.now()) != GoalStatus.failed)
+          .where(
+            (g) => g.status(transactions, DateTime.now()) != GoalStatus.failed,
+          )
           .length;
       budgetScore = ((notExceeded / budgetGoals.length) * 20).round();
     }
@@ -63,7 +67,8 @@ class CalculateHealthScore {
     // 5. INCOME GROWTH SCORE (0–20) - Simple implementation: 10 by default
     const growthScore = 10;
 
-    final total = savingsScore + goalScore + consistencyScore + budgetScore + growthScore;
+    final total =
+        savingsScore + goalScore + consistencyScore + budgetScore + growthScore;
     final tier = HealthScore.getTier(total);
 
     return HealthScore(
@@ -79,7 +84,9 @@ class CalculateHealthScore {
     );
   }
 
-  Map<int, double> _getWeeklyExpenseTotals(List<TransactionEntity> transactions) {
+  Map<int, double> _getWeeklyExpenseTotals(
+    List<TransactionEntity> transactions,
+  ) {
     final totals = <int, double>{};
     for (final t in transactions) {
       if (t.type == TransactionType.expense) {
@@ -98,7 +105,9 @@ class CalculateHealthScore {
     final mean = values.reduce((a, b) => a + b) / values.length;
     if (mean == 0) return 20;
 
-    final variance = values.map((v) => pow(v - mean, 2)).reduce((a, b) => a + b) / values.length;
+    final variance =
+        values.map((v) => pow(v - mean, 2)).reduce((a, b) => a + b) /
+        values.length;
     final stdDev = sqrt(variance);
     final cv = stdDev / mean;
 
@@ -108,9 +117,12 @@ class CalculateHealthScore {
   }
 
   String _generateInsight(int total, int savingsScore, int goalScore) {
-    if (savingsScore < 10) return 'Your savings rate is low. Try the 50/30/20 rule.';
-    if (goalScore < 12) return 'Some of your goals are at risk. Check your "Goals" tab for details.';
-    if (total >= 85) return 'Incredible! You have strong control over your finances.';
+    if (savingsScore < 10)
+      return 'Your savings rate is low. Try the 50/30/20 rule.';
+    if (goalScore < 12)
+      return 'Some of your goals are at risk. Check your "Goals" tab for details.';
+    if (total >= 85)
+      return 'Incredible! You have strong control over your finances.';
     return 'Good momentum. Stay consistent to reach "Excellent" status.';
   }
 }

@@ -139,43 +139,42 @@ class _FinnShell extends StatelessWidget {
     final currentIndex = navigationShell.currentIndex;
 
     return Scaffold(
-        body: navigationShell,
-        extendBody: true, // Allows body to flow under the NavigationBar
-        bottomNavigationBar: GlassContainer(
-          margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
-          padding: EdgeInsets.zero,
-          blurSigma: 24,
-          borderRadius: BorderRadius.circular(36),
-          child: NavigationBarTheme(
-            data: NavigationBarThemeData(
-              labelTextStyle: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    height: 1,
-                  );
-                }
+      body: navigationShell,
+      extendBody: true, // Allows body to flow under the NavigationBar
+      bottomNavigationBar: GlassContainer(
+        margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
+        padding: EdgeInsets.zero,
+        blurSigma: 24,
+        borderRadius: BorderRadius.circular(36),
+        child: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            labelTextStyle: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
                 return const TextStyle(
-                  fontSize: 10,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
                   height: 1,
                 );
-              }),
-            ),
-            child: NavigationBar(
-              height: 64,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              indicatorColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-              selectedIndex: currentIndex,
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-              onDestinationSelected: (index) {
-                navigationShell.goBranch(
-                  index,
-                  initialLocation: index == navigationShell.currentIndex,
-                );
-              },
-              destinations: const [
+              }
+              return const TextStyle(fontSize: 10, height: 1);
+            }),
+          ),
+          child: NavigationBar(
+            height: 64,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            indicatorColor: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.2),
+            selectedIndex: currentIndex,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            onDestinationSelected: (index) {
+              navigationShell.goBranch(
+                index,
+                initialLocation: index == navigationShell.currentIndex,
+              );
+            },
+            destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.home_outlined),
                 selectedIcon: Icon(Icons.home_rounded),

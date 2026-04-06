@@ -104,7 +104,7 @@ class _InsightsScreenState extends ConsumerState<InsightsScreen> {
                         child: HealthScoreCard(score: score),
                       ),
                       loading: () => const SizedBox.shrink(),
-                      error: (_, __) => const SizedBox.shrink(),
+                      error: (e, st) => const SizedBox.shrink(),
                     ),
                 MonthlySummaryCards(
                   income: insights.totalIncome,

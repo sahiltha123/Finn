@@ -40,9 +40,12 @@ class ExportTransactionsCsv {
     await file.writeAsString(csvContent, flush: true);
     debugPrint('CSV file written to: $filePath');
 
-    await Share.shareXFiles([
-      XFile(file.path, mimeType: 'text/csv'),
-    ], subject: 'Finn Transactions Export');
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(file.path, mimeType: 'text/csv')],
+        subject: 'Finn Transactions Export',
+      ),
+    );
   }
 
   String _toCsvValue(dynamic value) {

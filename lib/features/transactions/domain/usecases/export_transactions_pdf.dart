@@ -140,8 +140,11 @@ class ExportTransactionsPdf {
     await file.writeAsBytes(await pdf.save(), flush: true);
     debugPrint('PDF file written to: $filePath');
 
-    await Share.shareXFiles([
-      XFile(file.path, mimeType: 'application/pdf'),
-    ], subject: 'My Finn Transactions PDF Report');
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(file.path, mimeType: 'application/pdf')],
+        subject: 'My Finn Transactions PDF Report',
+      ),
+    );
   }
 }

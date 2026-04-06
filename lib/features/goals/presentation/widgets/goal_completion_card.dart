@@ -39,9 +39,12 @@ class _GoalCompletionCardState extends State<GoalCompletionCard> {
       ).create();
       await imagePath.writeAsBytes(pngBytes);
 
-      await Share.shareXFiles([
-        XFile(imagePath.path),
-      ], text: 'I just crushed my goal in Finn! 🚀 Goal: ${widget.goal.title}');
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(imagePath.path)],
+          text: 'I just crushed my goal in Finn! 🚀 Goal: ${widget.goal.title}',
+        ),
+      );
     } catch (e) {
       debugPrint('Error sharing goal: $e');
     }

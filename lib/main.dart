@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,14 +37,14 @@ Future<void> main() async {
 
   final preferences = await SharedPreferences.getInstance();
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
-  final localNotificationService = LocalNotificationService(
-    notificationsPlugin,
-  );
-  await localNotificationService.initialize();
-  await localNotificationService.requestPermissions();
+  final localNotificationService = LocalNotificationService(notificationsPlugin);
   final messagingService = MessagingService(FirebaseMessaging.instance);
+  
+  // Initialize services in the background so they don't block the first frame.
+  unawaited(localNotificationService.initialize());
+  unawaited(localNotificationService.requestPermissions());
   if (!kIsWeb) {
-    await messagingService.initialize();
+    unawaited(messagingService.initialize());
   }
 
   runApp(
